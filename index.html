@@ -2,284 +2,130 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-<style>
-  body {
-    font-family: sans-serif;
-    margin: 1em;
-    max-width: 600px;
-    line-height: 1.6;
-  }
-
-  input, select, button {
-    font-size: 1em;
-    padding: 0.4em;
-    margin-top: 0.5em;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .combo-block {
-    border: 1px solid #ccc;
-    padding: 1em;
-    margin-bottom: 1em;
-    border-radius: 8px;
-    background: #f9f9f9;
-  }
-
-  @media (max-width: 500px) {
-    .combo-block {
-      padding: 0.8em;
-    }
-    button {
-      font-size: 1.1em;
-    }
-  }
-</style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>萌虎燒點餐系統</title>
   <style>
     body {
-      font-family: sans-serif;
-      max-width: 780px;
-      margin: auto;
-      padding: 2em;
+      font-family: "Segoe UI", sans-serif;
+      margin: 1em;
+      max-width: 600px;
+      line-height: 1.6;
     }
-    h2, h3 {
-      text-align: center;
-    }
-    .desc {
-      background: #f0f0f0;
-      padding: 1em;
-      margin-bottom: 1.5em;
-      border-radius: 6px;
-      min-height: 18em;
-    }
-    .highlight-red { color: red; }
-    .highlight-blue { color: #004aad; }
+
     .combo-block {
       border: 1px solid #ccc;
       padding: 1em;
-      margin: 1em 0;
-      border-radius: 6px;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 0.5em;
+      margin-bottom: 1em;
+      border-radius: 8px;
+      background: #f9f9f9;
     }
-    .combo-block > label {
-      width: 180px;
-      text-align: left;
-    }
-    .combo-block.invalid {
-      background-color: #ffe6e6;
-    }
-    select, input {
-      margin: 0.3em;
-    }
-    button {
-      margin: 0.5em;
-      padding: 0.5em 1em;
+
+    input, select, button {
       font-size: 1em;
+      padding: 0.5em;
+      margin-top: 0.5em;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #ff9800;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #e68900;
+    }
+
+    #summary p {
+      margin: 0.4em 0;
+    }
+
+    @media (max-width: 500px) {
+      body { padding: 0.5em; }
+      button { font-size: 1.1em; }
     }
   </style>
 </head>
 <body>
+  <h1>🐯 萌虎燒點餐系統</h1>
+  <div id="container">
+  <div class="combo-block">
+    <label>雞蛋糕：</label><br />
+    <select class="c1">
+      <option value="">請選擇第一口味</option>
+      <option value="純">純</option>
+      <option value="巧">巧</option>
+    </select>
+    <select class="c2">
+      <option value="">第二口味（可空）</option>
+      <option value="純">純</option>
+      <option value="巧">巧</option>
+    </select><br />
+    <input type="number" class="qty" placeholder="份數" min="1" /><br />
+    <div class="subtotal">小計：</div>
+  </div>
 
-<h2>萌虎燒目錄</h2>
+  <div class="combo-block">
+    <label>飲品：</label><br />
+    <select class="flavor">
+      <option value="">請選擇口味</option>
+      <option value="紅">紅</option>
+      <option value="烏">烏</option>
+      <option value="冬">冬</option>
+      <option value="抹">抹</option>
+      <option value="鮮">鮮</option>
+    </select>
+    <select class="coldness">
+      <option value="冰">冰</option>
+      <option value="熱">熱</option>
+    </select>
+    <select class="size">
+      <option value="內">內用</option>
+      <option value="外自">外帶自取</option>
+      <option value="外熊">熊貓外送</option>
+    </select><br />
+    <input type="number" class="qty" placeholder="份數" min="1" /><br />
+    <div class="subtotal">小計：</div>
+  </div>
 
-<div style="text-align: center; margin-bottom: 1em;">
-  <label for="menuCategory">顯示說明：</label>
-  <select id="menuCategory" onchange="switchCategory()">
-    <option value="cake">🐣 雞蛋糕</option>
-    <option value="drink">🧋 飲品</option>
-    <option value="coffee">☕ 咖啡</option>
-  </select>
+  <div class="combo-block">
+    <label>咖啡：</label><br />
+    <select class="coffeeType">
+      <option value="">請選擇咖啡類型</option>
+      <option value="萌">萌</option>
+      <option value="美">美</option>
+      <option value="拿">拿</option>
+    </select>
+    <input class="flavorNote" placeholder="風味備註（選填）" /><br />
+    <select class="temp">
+      <option value="冰">冰</option>
+      <option value="熱">熱</option>
+    </select>
+    <select class="size">
+      <option value="內">內用</option>
+      <option value="外自">外帶自取</option>
+      <option value="外熊">熊貓外送</option>
+    </select><br />
+    <input type="number" class="qty" placeholder="份數" min="1" /><br />
+    <div class="subtotal">小計：</div>
+  </div>
+
+  <button onclick="calculateTotal()">🧾 計算總金額與點數</button>
+  <div id="summary" style="margin-top: 2em;"></div>
 </div>
-
-<div id="menuDesc" class="desc"></div>
-
-<div id="comboArea"></div>
-
-<div style="text-align:center; margin-top:1em;">
-  <button onclick="addCakeCombo()">新增雞蛋糕</button>
-  <button onclick="addDrinkCombo()">新增飲品</button>
-  <button onclick="addCoffeeCombo()">新增咖啡</button>
-</div>
-
-<div style="text-align:center; margin-top:1em;">
-  <button onclick="calculateTotal()">🧾 計算總金額</button>
-</div>
-
-<div id="summary" style="margin-top:2em;"></div>
-
 <script>
 const cakeTypeMap = {
-  "純": { type: "pure", price: 10 },
-  "巧": { type: "single", price: 15 },
-  "奶": { type: "single", price: 15 },
-  "鹹": { type: "single", price: 15 },
-  "抹": { type: "single", price: 15 },
-  "紅": { type: "single", price: 15 },
-  "芝": { type: "single", price: 15 },
-  "蒜": { type: "single", price: 15 },
-  "花": { type: "single", price: 15 },
-  "莓": { type: "single", price: 15 },
-  "酪": { type: "double", price: 20 },
-  "奶鹹": { type: "double", price: 20 },
-  "巧花": { type: "double", price: 20 },
-  "巧芝": { type: "double", price: 20 },
-  "抹巧": { type: "double", price: 20 },
-  "抹紅": { type: "double", price: 20 },
-  "濃": { type: "double", price: 20 }
+  '純': { type: 'pure', price: 20 },
+  '巧': { type: 'single', price: 30 },
+  // 你也可以擴充更多口味，例如：
+  // '奶': { type: 'double', price: 35 },
 };
-const cakeFlavors = Object.keys(cakeTypeMap);
-window.addEventListener('DOMContentLoaded', switchCategory);
-function switchCategory() {
-  const cat = document.getElementById('menuCategory').value;
-  const desc = document.getElementById('menuDesc');
-  if (cat === 'cake') {
-    desc.innerHTML = `
-      <p>一份2顆，可混搭不同口味。</p>
-      <p>純雞蛋糕：2顆20元，組合價10元</p>
-      <p>單餡雞蛋糕：2顆30元，組合價15元</p>
-      <p>雙餡雞蛋糕：2顆35元，組合價 <span class="highlight-red">20元</span></p>
-      <p class="highlight-blue">單次消費滿60元可獲得集點卡1點，滿6份點數雙倍，滿12份直接折掉最低價的1份，且改贈1點。集滿10點可兌換任意口味雞蛋糕1份。</p>
-      <p><span class="highlight-red">不提供</span><span class="highlight-blue">塑膠袋，雞蛋糕單次消費滿5份會附上不織布提網，滿12份再加贈萌虎不織布提袋</span></p>
-      <p class="highlight-blue">單次消費滿300元，苗栗市門牌可外送，市外請提前與老闆確認可行性</p>
-      <p class="highlight-blue">市外訂單金額估算：請輸入距離（公里），將無條件進位計算</p>
-      <div>距離：<input id="distanceInput" type="number" step="0.1" onchange="calculateDeliveryLimit()" /> 公里
-      <div id="deliveryEstimate" class="highlight-blue" style="margin-top:0.5em;"></div></div>
-    `;
-  } else if (cat === 'drink') {
-    desc.innerHTML = `
-      <p>冬瓜茶 內用240mL 10元 外帶480mL 25元</p>
-      <p>冬瓜鮮奶 內用240mL 25元 外帶480mL 45元</p>
-      <p class="highlight-blue">外帶自備悲劇折10元</p>
-    `;
-  } else {
-    desc.innerHTML = `
-      <p>美式 內用240mL 35元 外帶480mL 55元</p>
-      <p>拿鐵 內用240mL 55元 外帶480mL 95元</p>
-      <p>萌翻拿鐵(限內用)240mL 65元</p>
-      <p>以巧克力粉撒出萌虎頭的圖案，成功就是萌翻拿鐵，失敗變成醜翻拿鐵，醜翻價55元!!</p>
-      <p class="highlight-blue">外帶自備悲劇折10元</p>
-      <p class="highlight-blue">所有品項都不加糖也不給糖，包含咖啡豆風味也不含糖，僅是風味。</p>
-      <p class="highlight-blue">外帶咖啡因量雙倍</p>
-    `;
-  }
-}
-
-function calculateDeliveryLimit() {
-  const raw = parseFloat(document.getElementById('distanceInput')?.value);
-  const km = Math.ceil(raw || 0);
-  if (!km) return document.getElementById('deliveryEstimate').textContent = '';
-  const limit = km <= 3 ? 300 : km <= 15 ? 300 + (km - 3) * 100 : 300 + (km - 3) * 150;
-  document.getElementById('deliveryEstimate').textContent = `👉 已進位為 ${km} 公里，須滿 ${limit} 元才可外送`;
-}
-function addCakeCombo() {
-  const div = document.createElement("div");
-  div.className = "combo-block";
-  div.innerHTML = `
-    <h3>🐣 雞蛋糕</h3>
-    <label>份數：<input type="number" min="1" value="1" class="qty"></label>
-    <label>第一顆口味：
-      <select class="c1"><option value="">--選擇--</option>
-        ${cakeFlavors.map(f => `<option>${f}</option>`).join('')}
-      </select>
-    </label>
-    <label>第二顆口味：
-      <select class="c2"><option value="">--選擇--</option>
-        ${cakeFlavors.map(f => `<option>${f}</option>`).join('')}
-      </select>
-    </label>
-    <div class="subtotal">小計：-- 元</div>
-    <button onclick="this.parentElement.remove(); calculateTotal()">❌ 移除</button>
-  `;
-  document.getElementById('comboArea').appendChild(div);
-}
-
-function addDrinkCombo() {
-  const div = document.createElement("div");
-  div.className = "combo-block";
-  div.innerHTML = `
-    <h3>🧋 飲品</h3>
-    <label>份數：<input type="number" min="1" value="1" class="qty"></label>
-    <label>口味：
-      <select class="flavor">
-        <option value="">--選擇--</option>
-        <option value="冬">冬瓜茶</option>
-        <option value="冬鮮">冬瓜鮮奶</option>
-      </select>
-    </label>
-    <label>冰塊：
-      <select class="coldness">
-        <option value="冰">冰</option>
-        <option value="去冰">去冰</option>
-      </select>
-    </label>
-    <label>內用／外帶：
-      <select class="size">
-        <option value="外">外</option>
-        <option value="內">內</option>
-        <option value="外自">外自</option>
-      </select>
-    </label>
-    <div class="subtotal">小計：-- 元</div>
-    <button onclick="this.parentElement.remove(); calculateTotal()">❌ 移除</button>
-  `;
-  document.getElementById('comboArea').appendChild(div);
-}
-
-function addCoffeeCombo() {
-  const div = document.createElement("div");
-  div.className = "combo-block";
-  div.innerHTML = `
-    <h3>☕ 咖啡</h3>
-    <label>份數：<input type="number" min="1" value="1" class="qty"></label>
-    <label>品項：
-      <select class="coffeeType">
-        <option value="">--選擇--</option>
-        <option value="美">美式</option>
-        <option value="拿">拿鐵</option>
-        <option value="萌">萌翻拿鐵</option>
-      </select>
-    </label>
-    <label>咖啡豆風味：
-      <select class="flavorNote">
-        <option>經典 烘焙程度33% 咖啡因75mg</option>
-        <option>低因經典 烘焙程度33% 咖啡因2mg</option>
-        <option>香草 烘焙程度58% 咖啡因68mg</option>
-        <option>焦糖 烘焙程度58% 咖啡因68mg</option>
-        <option>花果 烘焙程度16% 咖啡因69mg</option>
-        <option>胡椒 烘焙程度75% 咖啡因55mg</option>
-      </select>
-    </label>
-    <label>溫度：
-      <select class="temp">
-        <option value="熱">熱</option>
-        <option value="冰">冰</option>
-      </select>
-    </label>
-    <label>內用／外帶：
-      <select class="size">
-        <option value="內">內</option>
-        <option value="外">外</option>
-        <option value="外自">外自</option>
-      </select>
-    </label>
-    <div class="subtotal">小計：-- 元</div>
-    <button onclick="this.parentElement.remove(); calculateTotal()">❌ 移除</button>
-  `;
-  div.querySelector('.coffeeType').addEventListener('change', e => {
-    const sel = div.querySelector('.size');
-    if (e.target.value === '萌') {
-      sel.value = '內';
-      sel.disabled = true;
-    } else {
-      sel.disabled = false;
-    }
-  });
-  document.getElementById('comboArea').appendChild(div);
-}
+</script>
+<script>
 function calculateTotal() {
   let total = 0, discount = 0, points = 0;
   let cakeQty = 0, drinkQty = 0, coffeeQty = 0;
@@ -367,12 +213,11 @@ function calculateTotal() {
     coffeeQty ? `咖啡共 ${coffeeQty} 份` : null
   ].filter(Boolean).join('、');
 
-  // ✅ summaryMap 依照類別排序（雞蛋糕→飲品→咖啡）
   const sortedSummary = Object.entries(summaryMap).sort(([a], [b]) => {
     const getType = (label) => {
-      if (label.includes('+')) return 0; // 雞蛋糕
-      if (/冬|紅|抹|烏|鮮/.test(label)) return 1; // 飲品
-      return 2; // 咖啡
+      if (label.includes('+')) return 0;
+      if (/冬|紅|抹|烏|鮮/.test(label)) return 1;
+      return 2;
     };
     return getType(a) - getType(b);
   });
