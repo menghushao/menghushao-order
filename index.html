@@ -3,36 +3,43 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>萌虎燒點餐系統</title>
+  <title>萌虎燒互動點餐</title>
   <style>
     html {
-      font-size: 4vw; /* 依螢幕寬度縮放字體 */
+      font-size: 4vw;
     }
 
     body {
       font-family: "Segoe UI", sans-serif;
-      margin: 1em;
-      max-width: 600px;
-      line-height: 1.8;
+      margin: 0;
+      padding: 0;
     }
 
-    .combo-block {
-      border: 1px solid #ccc;
+    #fixedHeader {
+      position: sticky;
+      top: 0;
+      background: #fffbe7;
       padding: 1em;
-      margin-bottom: 1em;
-      border-radius: 8px;
-      background: #f9f9f9;
+      z-index: 100;
+      border-bottom: 2px solid #ffa726;
     }
 
-    input, select, button {
+    #summaryArea {
+      font-size: 1rem;
+      margin-bottom: 1em;
+      line-height: 1.6;
+    }
+
+    .type-buttons {
+      display: flex;
+      gap: 0.5em;
+      flex-wrap: wrap;
+    }
+
+    .type-buttons button {
+      flex: 1;
       font-size: 1rem;
       padding: 0.6em;
-      margin-top: 0.6em;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    button {
       background: #ff9800;
       color: white;
       border: none;
@@ -40,144 +47,166 @@
       cursor: pointer;
     }
 
-    button:hover {
+    .type-buttons button:hover {
       background: #e68900;
     }
 
-    #summary p {
-      margin: 0.4em 0;
+    .combo-block {
+      background: #fff;
+      border: 1px solid #ccc;
+      border-left: 6px solid #ff9800;
+      border-radius: 6px;
+      padding: 1em;
+      margin: 1em;
+    }
+
+    .combo-block h3 {
+      font-size: 1.2rem;
+      margin: 0 0 0.5em 0;
+    }
+
+    .combo-block input,
+    .combo-block select {
+      width: 100%;
+      font-size: 1rem;
+      padding: 0.5em;
+      margin-top: 0.5em;
+      box-sizing: border-box;
+    }
+
+    .combo-block .subtotal {
+      margin-top: 0.5em;
+      color: #555;
+    }
+
+    .removeBtn {
+      background: #e53935;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 0.5em;
+      margin-top: 0.5em;
+      cursor: pointer;
     }
 
     @media (min-width: 768px) {
-      html {
-        font-size: 16px; /* 桌機回到正常大小 */
-      }
+      html { font-size: 16px; }
     }
   </style>
 </head>
 <body>
-  <h1 style="font-size: 1.5rem;">🐯 萌虎燒點餐系統</h1>
-  <div id="container">
-  <div class="combo-block">
-    <label>雞蛋糕：</label><br />
-    <select class="c1">
-      <option value="">請選擇第一口味</option>
-      <option value="純">純</option>
-      <option value="巧">巧</option>
-    </select>
-    <select class="c2">
-      <option value="">第二口味（可空）</option>
-      <option value="純">純</option>
-      <option value="巧">巧</option>
-    </select>
-    <input type="number" class="qty" placeholder="份數" min="1" />
-    <div class="subtotal">小計：</div>
+  <div id="fixedHeader">
+    <div id="summaryArea">🔢 統計區尚未產生內容…</div>
+    <div class="type-buttons">
+      <button onclick="addOrder('cake')">➕ 雞蛋糕</button>
+      <button onclick="addOrder('drink')">➕ 飲品</button>
+      <button onclick="addOrder('coffee')">➕ 咖啡</button>
+    </div>
   </div>
-
-  <div class="combo-block">
-    <label>飲品：</label><br />
-    <select class="flavor">
-      <option value="">請選擇口味</option>
-      <option value="紅">紅</option>
-      <option value="烏">烏</option>
-      <option value="冬">冬</option>
-      <option value="抹">抹</option>
-      <option value="鮮">鮮</option>
-    </select>
-    <select class="coldness">
-      <option value="冰">冰</option>
-      <option value="熱">熱</option>
-    </select>
-    <select class="size">
-      <option value="內">內用</option>
-      <option value="外自">外帶自取</option>
-      <option value="外熊">熊貓外送</option>
-    </select>
-    <input type="number" class="qty" placeholder="份數" min="1" />
-    <div class="subtotal">小計：</div>
-  </div>
-
-  <div class="combo-block">
-    <label>咖啡：</label><br />
-    <select class="coffeeType">
-      <option value="">請選擇咖啡類型</option>
-      <option value="萌">萌</option>
-      <option value="美">美</option>
-      <option value="拿">拿</option>
-    </select>
-    <input class="flavorNote" placeholder="風味備註（選填）" />
-    <select class="temp">
-      <option value="冰">冰</option>
-      <option value="熱">熱</option>
-    </select>
-    <select class="size">
-      <option value="內">內用</option>
-      <option value="外自">外帶自取</option>
-      <option value="外熊">熊貓外送</option>
-    </select>
-    <input type="number" class="qty" placeholder="份數" min="1" />
-    <div class="subtotal">小計：</div>
-  </div>
-
-  <button onclick="calculateTotal()">🧾 計算總金額與點數</button>
-  <div id="summary" style="margin-top: 2em;"></div>
-</div>
-<script>
+  <div id="orderArea"></div>
+  <script>
 const cakeTypeMap = {
   '純': { type: 'pure', price: 20 },
-  '巧': { type: 'single', price: 30 }
-  // 若之後加入雙料或其他口味，記得這裡擴充
+  '巧': { type: 'single', price: 30 },
+  // 若未來有雙口味等請擴充
 };
+
+function generateItemId() {
+  return Math.random().toString(36).substr(2, 9);
+}
+
+let allOrders = [];
 </script>
 <script>
-function calculateTotal() {
+function addOrder(type) {
+  const id = generateItemId();
+  const div = document.createElement('div');
+  div.className = 'combo-block';
+  div.dataset.id = id;
+  div.dataset.type = type;
+
+  let content = `<h3>第 ${allOrders.length + 1} 組 - ${type === 'cake' ? '雞蛋糕' : type === 'drink' ? '飲品' : '咖啡'} 訂單</h3>`;
+
+  if (type === 'cake') {
+    content += `
+      <select class="c1"><option value="">第一口味</option><option value="純">純</option><option value="巧">巧</option></select>
+      <select class="c2"><option value="">第二口味（可空）</option><option value="純">純</option><option value="巧">巧</option></select>
+    `;
+  } else if (type === 'drink') {
+    content += `
+      <select class="flavor"><option value="">飲品口味</option><option value="紅">紅</option><option value="烏">烏</option><option value="冬">冬</option><option value="抹">抹</option><option value="鮮">鮮</option></select>
+      <select class="coldness"><option value="冰">冰</option><option value="熱">熱</option></select>
+      <select class="size"><option value="內">內用</option><option value="外自">外帶</option><option value="外熊">熊貓</option></select>
+    `;
+  } else if (type === 'coffee') {
+    content += `
+      <select class="coffeeType"><option value="">咖啡種類</option><option value="萌">萌</option><option value="美">美</option><option value="拿">拿</option></select>
+      <input class="flavorNote" placeholder="風味備註（可空）" />
+      <select class="temp"><option value="冰">冰</option><option value="熱">熱</option></select>
+      <select class="size"><option value="內">內用</option><option value="外自">外帶</option><option value="外熊">熊貓</option></select>
+    `;
+  }
+
+  content += `
+    <input type="number" class="qty" placeholder="份數" min="1" value="1" />
+    <div class="subtotal">小計：</div>
+    <button class="removeBtn" onclick="removeOrder('${id}')">移除此組</button>
+  `;
+
+  div.innerHTML = content;
+  div.querySelectorAll('select, input').forEach(el => {
+    el.addEventListener('input', recalculateAll);
+  });
+
+  document.getElementById('orderArea').appendChild(div);
+  allOrders.push({ id, type });
+  recalculateAll();
+}
+
+function removeOrder(id) {
+  const el = document.querySelector(`[data-id="${id}"]`);
+  if (el) el.remove();
+  allOrders = allOrders.filter(o => o.id !== id);
+  recalculateAll();
+}
+</script>
+<script>
+function recalculateAll() {
+  const summaryMap = {};
+  let flatItems = [];
   let total = 0, discount = 0, points = 0;
   let cakeQty = 0, drinkQty = 0, coffeeQty = 0;
-  let hasInvalid = false;
-  const summaryMap = {};
-  const flatItems = [];
 
   document.querySelectorAll('.combo-block').forEach(div => {
+    const type = div.dataset.type;
     const qty = +div.querySelector('.qty')?.value || 1;
-    div.classList.remove('invalid');
     let label = '', price = 0;
 
-    if (div.querySelector('.c1')) {
-      const f1 = div.querySelector('.c1').value;
-      const f2 = div.querySelector('.c2').value || f1;
-      if (!f1 || !cakeTypeMap[f1] || !cakeTypeMap[f2]) {
-        div.classList.add('invalid'); hasInvalid = true;
-        div.querySelector('.subtotal').textContent = '小計：-- 元'; return;
-      }
-      const sortedLabel = [f1, f2].sort().join('+');
-      label = sortedLabel;
+    if (type === 'cake') {
+      const f1 = div.querySelector('.c1')?.value;
+      const f2 = div.querySelector('.c2')?.value || f1;
+      if (!f1 || !cakeTypeMap[f1] || !cakeTypeMap[f2]) return;
+      label = [f1, f2].sort().join('+');
       price = f1 === f2
         ? (cakeTypeMap[f1].type === 'pure' ? 20 : cakeTypeMap[f1].type === 'single' ? 30 : 35)
         : cakeTypeMap[f1].price + cakeTypeMap[f2].price;
       cakeQty += qty;
-    } else if (div.querySelector('.flavor')) {
-      const f = div.querySelector('.flavor').value;
-      const t = div.querySelector('.coldness').value;
-      const s = div.querySelector('.size').value;
-      if (!f) {
-        div.classList.add('invalid'); hasInvalid = true;
-        div.querySelector('.subtotal').textContent = '小計：-- 元'; return;
-      }
+    } else if (type === 'drink') {
+      const f = div.querySelector('.flavor')?.value;
+      const t = div.querySelector('.coldness')?.value;
+      const s = div.querySelector('.size')?.value;
+      if (!f || !t || !s) return;
       label = `${f}${t}${s}`;
       price = f === '冬' ? (s === '內' ? 10 : s === '外自' ? 15 : 25)
                          : (s === '內' ? 25 : s === '外自' ? 35 : 45);
       drinkQty += qty;
-    } else if (div.querySelector('.coffeeType')) {
-      const f = div.querySelector('.coffeeType').value;
-      const t = div.querySelector('.temp').value;
-      const s = div.querySelector('.size').value;
-      const fullNote = div.querySelector('.flavorNote')?.value || '';
-      const shortNote = fullNote.split(' ')[0];
-      if (!f) {
-        div.classList.add('invalid'); hasInvalid = true;
-        div.querySelector('.subtotal').textContent = '小計：-- 元'; return;
-      }
-      label = `${f}${shortNote}${t}${s}`;
+    } else if (type === 'coffee') {
+      const f = div.querySelector('.coffeeType')?.value;
+      const t = div.querySelector('.temp')?.value;
+      const s = div.querySelector('.size')?.value;
+      const note = div.querySelector('.flavorNote')?.value || '';
+      if (!f || !t || !s) return;
+      label = `${f}${note.split(' ')[0]}${t}${s}`;
       price = f === '萌' ? 65 : f === '美'
         ? (s === '內' ? 35 : s === '外自' ? 45 : 55)
         : (s === '內' ? 55 : s === '外自' ? 85 : 95);
@@ -210,13 +239,6 @@ function calculateTotal() {
     points += Math.floor(restSum / 60);
   }
 
-  const totalQty = cakeQty + drinkQty + coffeeQty;
-  const typeSummary = [
-    cakeQty ? `雞蛋糕共 ${cakeQty} 份` : null,
-    drinkQty ? `飲品共 ${drinkQty} 份` : null,
-    coffeeQty ? `咖啡共 ${coffeeQty} 份` : null
-  ].filter(Boolean).join('、');
-
   const sortedSummary = Object.entries(summaryMap).sort(([a], [b]) => {
     const getType = (label) => {
       if (label.includes('+')) return 0;
@@ -226,17 +248,18 @@ function calculateTotal() {
     return getType(a) - getType(b);
   });
 
-  const summaryText = sortedSummary
-    .map(([k, v]) => `${k}×${v}`)
-    .join('、');
+  const summaryText = sortedSummary.map(([k, v]) => `${k}×${v}`).join('、');
+  const typeLine = [
+    cakeQty ? `雞蛋糕 ${cakeQty} 份` : null,
+    drinkQty ? `飲品 ${drinkQty} 份` : null,
+    coffeeQty ? `咖啡 ${coffeeQty} 份` : null
+  ].filter(Boolean).join('、');
 
-  document.getElementById('summary').innerHTML = `
-    <p><strong>總金額：</strong>${total - discount} 元</p>
-    <p>${typeSummary}，總計 ${totalQty} 份</p>
-    <p style="color:green">折抵金額：${discount} 元</p>
-    <p style="color:#004aad">可獲得集點卡 ${points} 點</p>
-    ${hasInvalid ? `<p style="color:red;">❗ 有組合尚未填寫完成</p>` : ''}
-    <p style="color:#555">${summaryText}</p>
+  document.getElementById('summaryArea').innerHTML = `
+    <strong>總金額：</strong>${total - discount} 元　
+    <strong>點數：</strong>${points} 點<br/>
+    ${typeLine}<br/>
+    <span style="color:gray">${summaryText}</span>
   `;
 }
 </script>
