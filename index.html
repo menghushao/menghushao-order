@@ -5,11 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>萌虎燒點餐系統</title>
   <style>
+    html {
+      font-size: 4vw; /* 依螢幕寬度縮放字體 */
+    }
+
     body {
       font-family: "Segoe UI", sans-serif;
       margin: 1em;
       max-width: 600px;
-      line-height: 1.6;
+      line-height: 1.8;
     }
 
     .combo-block {
@@ -21,9 +25,9 @@
     }
 
     input, select, button {
-      font-size: 1em;
-      padding: 0.5em;
-      margin-top: 0.5em;
+      font-size: 1rem;
+      padding: 0.6em;
+      margin-top: 0.6em;
       width: 100%;
       box-sizing: border-box;
     }
@@ -44,14 +48,15 @@
       margin: 0.4em 0;
     }
 
-    @media (max-width: 500px) {
-      body { padding: 0.5em; }
-      button { font-size: 1.1em; }
+    @media (min-width: 768px) {
+      html {
+        font-size: 16px; /* 桌機回到正常大小 */
+      }
     }
   </style>
 </head>
 <body>
-  <h1>🐯 萌虎燒點餐系統</h1>
+  <h1 style="font-size: 1.5rem;">🐯 萌虎燒點餐系統</h1>
   <div id="container">
   <div class="combo-block">
     <label>雞蛋糕：</label><br />
@@ -64,8 +69,8 @@
       <option value="">第二口味（可空）</option>
       <option value="純">純</option>
       <option value="巧">巧</option>
-    </select><br />
-    <input type="number" class="qty" placeholder="份數" min="1" /><br />
+    </select>
+    <input type="number" class="qty" placeholder="份數" min="1" />
     <div class="subtotal">小計：</div>
   </div>
 
@@ -87,8 +92,8 @@
       <option value="內">內用</option>
       <option value="外自">外帶自取</option>
       <option value="外熊">熊貓外送</option>
-    </select><br />
-    <input type="number" class="qty" placeholder="份數" min="1" /><br />
+    </select>
+    <input type="number" class="qty" placeholder="份數" min="1" />
     <div class="subtotal">小計：</div>
   </div>
 
@@ -100,7 +105,7 @@
       <option value="美">美</option>
       <option value="拿">拿</option>
     </select>
-    <input class="flavorNote" placeholder="風味備註（選填）" /><br />
+    <input class="flavorNote" placeholder="風味備註（選填）" />
     <select class="temp">
       <option value="冰">冰</option>
       <option value="熱">熱</option>
@@ -109,8 +114,8 @@
       <option value="內">內用</option>
       <option value="外自">外帶自取</option>
       <option value="外熊">熊貓外送</option>
-    </select><br />
-    <input type="number" class="qty" placeholder="份數" min="1" /><br />
+    </select>
+    <input type="number" class="qty" placeholder="份數" min="1" />
     <div class="subtotal">小計：</div>
   </div>
 
@@ -120,9 +125,8 @@
 <script>
 const cakeTypeMap = {
   '純': { type: 'pure', price: 20 },
-  '巧': { type: 'single', price: 30 },
-  // 你也可以擴充更多口味，例如：
-  // '奶': { type: 'double', price: 35 },
+  '巧': { type: 'single', price: 30 }
+  // 若之後加入雙料或其他口味，記得這裡擴充
 };
 </script>
 <script>
