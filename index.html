@@ -129,22 +129,68 @@ function generateItemId() {
 }
 </script>
 <script>
-const cakeTypeMap = {
-  '純': { type: 'pure', price: 20 },
-  '巧': { type: 'single', price: 30 }
-  // 若未來擴充雙口味請在此定義
-};
+function addOrder(type) {
+  const id = generateItemId();
+  const index = ++orderCounters[type]; // 該類型第幾組
+  const div = document.createElement('div');
+  div.className = 'combo-block';
+  div.dataset.id = id;
+  div.dataset.type = type;
 
-let orderCounters = {
-  cake: 0,
-  drink: 0,
-  coffee: 0
-};
+  let title = `第 ${index} 組 - ${type === 'cake' ? '雞蛋糕' : type === 'drink' ? '飲品' : '咖啡'} 訂單`;
+  let content = `<h3 class="title">${title}</h3>`;
 
-let allOrders = [];
+  if (type === 'cake') {
+    content += `
+      <select class="c1"><option value="">第一口味</option><option value="純">純</option><option value="巧">巧</option></select>
+      <select class="c2"><option value="">第二口味（可空）</option><option value="純">純</option><option value="巧">巧</option></select>
+    `;
+  } else if (type === 'drink') {
+    content += `
+      <select class="drinkFlavor"><option value="">飲品口味</option><option value="蜂蜜檸檬">蜂蜜檸檬</option><option value="鮮奶茶">鮮奶茶</option><option value="豆漿">豆漿</option></select>
+      <select class="coldness"><option value="">冰熱</option><option value="冰">冰</option><option value="熱">熱</option></select>
+      <select class="place"><option value="">使用方式</option><option value="內用">內用</option><option value="外帶自取">外帶自取</option></select>
+    `;
+  } else if (type === 'coffee') {
+    content += `
+      <select class="coffeeType"><option value="">咖啡種類</option><option value="萌">萌</option><option value="美">美</option><option value="拿">拿</option></select>
+      <input class="flavorNote" placeholder="風味備註（可空）" />
+      <select class="temp"><option value="">冰熱</option><option value="冰">冰</option><option value="熱">熱</option></select>
+      <select class="place"><option value="">使用方式</option><option value="內用">內用</option><option value="外帶自取">外帶自取</option></select>
+    `;
+  }
 
-function generateItemId() {
-  return Math.random().toString(36).substr(2, 9);
+  content += `
+    <input type="number" class="qty" placeholder="份數" min="1" value="1" />
+    <div class="subtotal">小計：</div>
+    <button class="removeBtn" onclick="removeOrder('${id}', '${type}')">移除此組</button>
+  `;
+
+  div.innerHTML = content;
+  div.querySelectorAll('select, input').forEach(el =>
+    el.addEventListener('input', recalculateAll)
+  );
+
+  document.getElementById('orderArea').appendChild(div);
+  allOrders.push({ id, type });
+  recalculateAll();
+}
+
+function removeOrder(id, type) {
+  const el = document.querySelector(`[data-id="${id}"]`);
+  if (el) el.remove();
+  allOrders = allOrders.filter(o => o.id !== id);
+  orderCounters[type]--; // 減少該類型數量
+
+  // 重新編號同類型區塊
+  let count = 0;
+  document.querySelectorAll(`.combo-block[data-type="${type}"]`).forEach(block => {
+    count++;
+    const title = block.querySelector('.title');
+    if (title) title.textContent = `第 ${count} 組 - ${type === 'cake' ? '雞蛋糕' : type === 'drink' ? '飲品' : '咖啡'} 訂單`;
+  });
+
+  recalculateAll();
 }
 </script>
 <script>
