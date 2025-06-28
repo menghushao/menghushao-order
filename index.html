@@ -14,11 +14,188 @@
       color: #222;
     }
 
-    /* 其他 CSS 與先前版本相同，略去重複貼文 */
+    #fixedHeader {
+      position: sticky;
+      top: 0;
+      background: #fffbe7;
+      padding: 1em;
+      z-index: 100;
+      border-bottom: 2px solid #ffa726;
+    }
 
-    .combo-block input.qty {
-      max-width: 4em;
-      text-align: right;
+    #summary {
+      font-size: 0.95rem;
+      line-height: 1.2;
+      margin-bottom: 1em;
+    }
+
+    .type-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5em;
+      align-items: center;
+    }
+
+    .wrap-with-hint { position: relative; }
+
+    .hint-icon {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      width: 1.2em;
+      height: 1.2em;
+      background: #fff;
+      color: #444;
+      font-size: 0.75rem;
+      border-radius: 50%;
+      border: 1px solid #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: help;
+    }
+
+    .hint-box {
+      display: none;
+      position: absolute;
+      top: 140%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      padding: 1em;
+      min-width: 12em;
+      max-width: 80vw;
+      z-index: 999;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      white-space: normal;
+    }
+
+    .wrap-with-hint:hover .hint-box { display: block; }
+
+    .hint-box strong {
+      display: block;
+      font-size: 1rem;
+      margin-bottom: 0.4em;
+    }
+
+    .hint-box img {
+      width: 2.5em;
+      height: auto;
+      vertical-align: middle;
+      margin-right: 0.4em;
+    }
+
+    .type-buttons button {
+      font-size: 1rem;
+      padding: 0.6em 1em;
+      background: #ff9800;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .type-buttons button:hover { background: #e68900; }
+
+    #datetimeContainer,
+    #distanceContainer {
+      margin-top: 0.5em;
+      display: none;
+      align-items: center;
+      gap: 0.5em;
+      flex-wrap: wrap;
+    }
+
+    #distanceMsg {
+      font-size: 0.9rem;
+      color: #333;
+      white-space: nowrap;
+    }
+
+    .combo-block {
+      background: #fff;
+      border: 1px solid #ccc;
+      border-left: 6px solid #ff9800;
+      border-radius: 6px;
+      padding: 1em;
+      margin: 1em 0;
+    }
+
+    .combo-block.invalid {
+      background-color: #ffe6e6;
+      border-left-color: #d32f2f;
+    }
+
+    .combo-block h3 {
+      font-size: 1.1rem;
+      margin: 0 0 0.5em 0;
+    }
+
+    .combo-block input,
+    .combo-block select {
+      width: 100%;
+      font-size: 1rem;
+      padding: 0.5em;
+      margin-top: 0.5em;
+      box-sizing: border-box;
+    }
+
+    .combo-block .subtotal {
+      margin-top: 0.5em;
+      color: #555;
+    }
+
+    .removeBtn {
+      background: #e53935;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 0.5em;
+      margin-top: 0.5em;
+      cursor: pointer;
+    }
+
+    .summary-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5em;
+      margin-top: 1em;
+      align-items: center;
+    }
+
+    .circle-button {
+      width: 2.4em;
+      height: 2.4em;
+      border-radius: 50%;
+      border: none;
+      background-color: #ececec;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .circle-button img {
+      width: 1.5em;
+      height: 1.5em;
+    }
+
+    .copy-button {
+      border-radius: 6px;
+      padding: 0.4em 0.8em;
+      background-color: #ccc;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    @media (min-width: 768px) {
+      html { font-size: 16px; }
     }
   </style>
 </head>
@@ -160,15 +337,18 @@ function generateItemId() {
 function showDatetimePicker() {
   document.getElementById("datetimeContainer").style.display = "flex";
 }
+
 function showDistanceInput() {
   document.getElementById("distanceContainer").style.display = "flex";
 }
+
 function clearDatetime() {
   document.getElementById("datetimePicker").value = "";
   selectedDatetime = "";
   document.getElementById("datetimeContainer").style.display = "none";
   recalculateAll();
 }
+
 function clearDistance() {
   document.getElementById("distanceInput").value = "";
   cityDistance = 0;
@@ -180,6 +360,7 @@ document.getElementById("datetimePicker").addEventListener("change", e => {
   selectedDatetime = e.target.value;
   recalculateAll();
 });
+
 document.getElementById("distanceInput").addEventListener("input", e => {
   cityDistance = +e.target.value || 0;
   recalculateAll();
@@ -221,7 +402,7 @@ function addOrder(type) {
   }
 
   content += `
-    <input type="number" class="qty" min="1" max="999" step="1" inputmode="numeric" pattern="[0-9]*" placeholder="份數" />
+    <input type="number" class="qty" min="1" value="1" placeholder="份數" />
     <div class="subtotal">小計：-- 元</div>
     <button class="removeBtn" onclick="removeOrder('${id}', '${type}')">❌ 移除此組</button>
   `;
@@ -276,13 +457,7 @@ function recalculateAll() {
   const flatItems = [];
 
   document.querySelectorAll('.combo-block').forEach(div => {
-    // ✅ NEW: 過濾不合法的 qty 值
-    let raw = div.querySelector('.qty')?.value || "1";
-    let cleaned = raw.replace(/\D/g, '').slice(0, 3);
-    let qty = parseInt(cleaned || "1", 10);
-    if (qty < 1) qty = 1;
-    div.querySelector('.qty').value = qty;
-
+    const qty = +div.querySelector('.qty')?.value || 1;
     div.classList.remove('invalid');
     let label = '', price = 0;
 
@@ -406,7 +581,8 @@ function copySummary() {
     if (div.classList.contains('invalid')) return;
 
     const qtyRaw = div.querySelector(".qty")?.value || "1";
-    const qty = parseInt(qtyRaw.replace(/\D/g, '').slice(0, 3), 10) || 1;
+    const cleanQty = qtyRaw.replace(/\D/g, '').slice(0, 3);
+    const qty = parseInt(cleanQty || "1", 10) || 1;
 
     let label = "";
 
