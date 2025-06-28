@@ -21,7 +21,15 @@
       z-index: 100;
       border-bottom: 2px solid #ffa726;
     }
-    #summary {
+    #summary {background-image: url('https://scontent.ftpe8-3.fna.fbcdn.net/v/t39.30808-6/292094787_468717045257750_6111733142145967089_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=vQa7_ORISZkQ7kNvwHdEQSv&_nc_oc=AdkmMNwe0cnm-u7CHTYHUHfSAZVwHst8GkbR9ePWT1BQMYyTgDX2RmHxp3_chmNZr6I&_nc_zt=23&_nc_ht=scontent.ftpe8-3.fna&_nc_gid=fFlnAxVw_3zEKzdr7CJKkw&oh=00_AfNWuTqgwDeVQIL0H964BOU7qtA_GRWJBhsASqhy1g2wEQ&oe=686567E1');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-blend-mode: lighten;
+  background-color: rgba(255, 255, 255, 0.7); /* 淡白底以確保文字可讀 */
+  padding: 1em;
+  border-radius: 8px;
+
       font-size: 0.95rem;
       line-height: 1.2;
       margin-bottom: 1em;
@@ -249,24 +257,25 @@
 
   <div id="orderArea"></div>
   <script>
-const cakeTypeMap = {
-  "純": { type: "pure", price: 10 },
-  "巧": { type: "single", price: 15 },
-  "奶": { type: "single", price: 15 },
-  "鹹": { type: "single", price: 15 },
-  "抹": { type: "single", price: 15 },
-  "紅": { type: "single", price: 15 },
-  "芝": { type: "single", price: 15 },
-  "蒜": { type: "single", price: 15 },
-  "花": { type: "single", price: 15 },
-  "莓": { type: "single", price: 15 },
-  "酪": { type: "double", price: 20 },
-  "奶鹹": { type: "double", price: 20 },
-  "巧花": { type: "double", price: 20 },
-  "巧芝": { type: "double", price: 20 },
-  "抹巧": { type: "double", price: 20 },
-  "抹紅": { type: "double", price: 20 },
-  "濃": { type: "double", price: 20 }
+const opts = Object.entries({
+  "純": "純雞蛋糕",
+  "巧": "巧克力",
+  "奶": "奶油",
+  "鹹": "鹹蛋黃",
+  "抹": "抹茶",
+  "紅": "紅豆",
+  "芝": "芝麻",
+  "蒜": "蒜香",
+  "花": "梅子花生",
+  "莓": "草莓",
+  "酪": "雙色乳酪",
+  "奶鹹": "奶油鹹蛋",
+  "巧花": "巧克力花生",
+  "巧芝": "巧克力芝麻",
+  "抹巧": "抹茶巧克力",
+  "抹紅": "抹茶紅豆",
+  "濃": "玉米濃湯"
+}).map(([abbr, label]) => `<option value="${abbr}">${label}</option>`).join('');
 };
 
 const drinkOptions = [
