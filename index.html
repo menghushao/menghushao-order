@@ -114,36 +114,52 @@
   <div id="orderArea"></div>
   <script>
 const cakeTypeMap = {
-  '純': { type: 'pure', price: 20 },
-  '巧': { type: 'single', price: 30 },
-  '花': { type: 'single', price: 30 },
-  '芋': { type: 'single', price: 30 },
-  '抹': { type: 'single', price: 30 },
-  '乳': { type: 'single', price: 30 },
-  '起': { type: 'single', price: 30 },
-  '肉': { type: 'single', price: 30 },
-  '德': { type: 'single', price: 30 },
-  '草': { type: 'single', price: 30 },
-  'OREO': { type: 'single', price: 30 },
-  '地瓜': { type: 'single', price: 30 },
-  '芒': { type: 'single', price: 30 },
-  '葡': { type: 'single', price: 30 },
-  '煉': { type: 'single', price: 30 },
-  '花生': { type: 'single', price: 30 },
-  '香蕉': { type: 'single', price: 30 },
-  '起司': { type: 'single', price: 30 },
-  '藍莓': { type: 'single', price: 30 },
-  '綜合莓': { type: 'single', price: 30 }
+  "純":   { type: "pure", price: 10 },
+  "巧":   { type: "single", price: 15 },
+  "奶":   { type: "single", price: 15 },
+  "鹹":   { type: "single", price: 15 },
+  "抹":   { type: "single", price: 15 },
+  "紅":   { type: "single", price: 15 },
+  "芝":   { type: "single", price: 15 },
+  "蒜":   { type: "single", price: 15 },
+  "花":   { type: "single", price: 15 },
+  "莓":   { type: "single", price: 15 },
+  "酪":   { type: "double", price: 20 },
+  "奶鹹": { type: "double", price: 20 },
+  "巧花": { type: "double", price: 20 },
+  "巧芝": { type: "double", price: 20 },
+  "抹巧": { type: "double", price: 20 },
+  "抹紅": { type: "double", price: 20 },
+  "濃":   { type: "double", price: 20 }
 };
 
-// 各類型組別計數器，用於標示「第 X 組」
+const drinkOptions = [
+  { value: "冬", label: "冬瓜茶" },
+  { value: "冬鮮", label: "冬瓜鮮奶" }
+];
+
+const coffeeTypes = [
+  { value: "美", label: "美式" },
+  { value: "拿", label: "拿鐵" },
+  { value: "萌", label: "萌翻拿鐵" }
+];
+
+const coffeeFlavors = [
+  "經典 烘焙程度33% 咖啡因75mg",
+  "低因經典 烘焙程度33% 咖啡因2mg",
+  "香草 烘焙程度58% 咖啡因68mg",
+  "焦糖 烘焙程度58% 咖啡因68mg",
+  "花果 烘焙程度16% 咖啡因69mg",
+  "胡椒 烘焙程度75% 咖啡因55mg"
+];
+
+// 組別控制變數
 let orderCounters = {
   cake: 0,
   drink: 0,
   coffee: 0
 };
 
-// 儲存所有訂單資料
 let allOrders = [];
 
 function generateItemId() {
@@ -163,34 +179,57 @@ function addOrder(type) {
   let content = `<h3 class="title">${title}</h3>`;
 
   if (type === 'cake') {
+    const opts = Object.keys(cakeTypeMap).map(f => `<option value="${f}">${f}</option>`).join('');
     content += `
-      <select class="c1"><option value="">第一口味</option>${Object.keys(cakeTypeMap).map(k => `<option value="${k}">${k}</option>`).join('')}</select>
-      <select class="c2"><option value="">第二口味（可空）</option>${Object.keys(cakeTypeMap).map(k => `<option value="${k}">${k}</option>`).join('')}</select>
+      <select class="c1"><option value="">第一顆口味</option>${opts}</select>
+      <select class="c2"><option value="">第二顆口味（可空）</option>${opts}</select>
     `;
   } else if (type === 'drink') {
+    const opts = drinkOptions.map(o => `<option value="${o.value}">${o.label}</option>`).join('');
     content += `
-      <select class="drinkFlavor"><option value="">飲品口味</option><option value="冬瓜檸檬">冬瓜檸檬</option><option value="蜜香紅茶">蜜香紅茶</option><option value="抹茶拿鐵">抹茶拿鐵</option></select>
-      <select class="coldness"><option value="">冰熱</option><option value="冰">冰</option><option value="熱">熱</option></select>
-      <select class="place"><option value="">使用方式</option><option value="內用">內用</option><option value="外帶自取">外帶自取</option></select>
+      <select class="drinkFlavor"><option value="">飲品口味</option>${opts}</select>
+      <select class="coldness"><option value="">冰塊</option><option>冰</option><option>去冰</option></select>
+      <select class="place"><option value="">內用/外帶</option><option value="內">內</option><option value="外">外</option><option value="外自">外自</option></select>
     `;
   } else if (type === 'coffee') {
+    const typeOpts = coffeeTypes.map(o => `<option value="${o.value}">${o.label}</option>`).join('');
+    const flavorOpts = coffeeFlavors.map(f => `<option>${f}</option>`).join('');
     content += `
-      <select class="coffeeType"><option value="">咖啡種類</option><option value="萌">萌</option><option value="美">美</option><option value="拿">拿</option></select>
-      <input class="flavorNote" placeholder="風味備註（可空）" />
-      <select class="temp"><option value="">冰熱</option><option value="冰">冰</option><option value="熱">熱</option></select>
-      <select class="place"><option value="">使用方式</option><option value="內用">內用</option><option value="外帶自取">外帶自取</option></select>
+      <select class="coffeeType"><option value="">咖啡種類</option>${typeOpts}</select>
+      <select class="flavorNote">${flavorOpts}</select>
+      <select class="temp"><option value="">溫度</option><option>熱</option><option>冰</option></select>
+      <select class="place"><option value="">內用/外帶</option><option value="內">內</option><option value="外">外</option><option value="外自">外自</option></select>
     `;
   }
 
   content += `
-    <input type="number" class="qty" placeholder="份數" min="1" value="1" />
-    <div class="subtotal">小計：</div>
-    <button class="removeBtn" onclick="removeOrder('${id}', '${type}')">移除此組</button>
+    <input type="number" class="qty" min="1" value="1" placeholder="份數" />
+    <div class="subtotal">小計：-- 元</div>
+    <button class="removeBtn" onclick="removeOrder('${id}', '${type}')">❌ 移除此組</button>
   `;
 
   div.innerHTML = content;
-  div.querySelectorAll('select, input').forEach(el => el.addEventListener('input', recalculateAll));
   document.getElementById('orderArea').appendChild(div);
+
+  // 萌翻限制內用
+  if (type === 'coffee') {
+    const sel = div.querySelector('.coffeeType');
+    const placeSel = div.querySelector('.place');
+    sel.addEventListener('change', () => {
+      if (sel.value === '萌') {
+        placeSel.value = '內';
+        placeSel.disabled = true;
+      } else {
+        placeSel.disabled = false;
+      }
+      recalculateAll();
+    });
+  }
+
+  div.querySelectorAll('select, input').forEach(el =>
+    el.addEventListener('input', recalculateAll)
+  );
+
   allOrders.push({ id, type });
   recalculateAll();
 }
@@ -201,7 +240,7 @@ function removeOrder(id, type) {
   allOrders = allOrders.filter(o => o.id !== id);
   orderCounters[type]--;
 
-  // 重編該類型的組數
+  // 重編號該類型
   let count = 0;
   document.querySelectorAll(`.combo-block[data-type="${type}"]`).forEach(block => {
     count++;
@@ -214,64 +253,58 @@ function removeOrder(id, type) {
 </script>
 <script>
 function recalculateAll() {
-  const summaryMap = {};
-  let flatItems = [];
   let total = 0, discount = 0, points = 0;
   let cakeQty = 0, drinkQty = 0, coffeeQty = 0;
   let hasInvalid = false;
+  const summaryMap = {};
+  const flatItems = [];
 
   document.querySelectorAll('.combo-block').forEach(div => {
-    const type = div.dataset.type;
     const qty = +div.querySelector('.qty')?.value || 1;
     div.classList.remove('invalid');
     let label = '', price = 0;
 
-    if (type === 'cake') {
-      const f1 = div.querySelector('.c1')?.value;
-      const f2 = div.querySelector('.c2')?.value || f1;
+    if (div.querySelector('.c1')) {
+      const f1 = div.querySelector('.c1').value;
+      const f2 = div.querySelector('.c2').value || f1;
       if (!f1 || !cakeTypeMap[f1] || !cakeTypeMap[f2]) {
-        div.classList.add('invalid');
-        div.querySelector('.subtotal').textContent = '小計：-- 元';
-        hasInvalid = true;
-        return;
+        div.classList.add('invalid'); hasInvalid = true;
+        div.querySelector('.subtotal').textContent = '小計：-- 元'; return;
       }
-      label = [f1, f2].sort().join('+');
+      const sortedLabel = [f1, f2].sort().join('+');
+      label = sortedLabel;
       price = f1 === f2
-        ? (cakeTypeMap[f1].type === 'pure' ? 20 : 30)
+        ? (cakeTypeMap[f1].type === 'pure' ? 20
+            : cakeTypeMap[f1].type === 'single' ? 30 : 35)
         : cakeTypeMap[f1].price + cakeTypeMap[f2].price;
       cakeQty += qty;
-    }
-
-    if (type === 'drink') {
-      const f = div.querySelector('.drinkFlavor')?.value;
+    } else if (div.querySelector('.drinkFlavor')) {
+      const f = div.querySelector('.drinkFlavor').value;
       const t = div.querySelector('.coldness')?.value;
       const s = div.querySelector('.place')?.value;
-      if (!f || !t || !s) {
-        div.classList.add('invalid');
-        div.querySelector('.subtotal').textContent = '小計：-- 元';
-        hasInvalid = true;
-        return;
+      if (!f) {
+        div.classList.add('invalid'); hasInvalid = true;
+        div.querySelector('.subtotal').textContent = '小計：-- 元'; return;
       }
       label = `${f}${t}${s}`;
-      price = 30;
+      price = f === '冬'
+        ? (s === '內' ? 10 : s === '外自' ? 15 : 25)
+        : (s === '內' ? 25 : s === '外自' ? 35 : 45);
       drinkQty += qty;
-    }
-
-    if (type === 'coffee') {
-      const f = div.querySelector('.coffeeType')?.value;
+    } else if (div.querySelector('.coffeeType')) {
+      const f = div.querySelector('.coffeeType').value;
       const t = div.querySelector('.temp')?.value;
       const s = div.querySelector('.place')?.value;
-      const note = div.querySelector('.flavorNote')?.value || '';
-      if (!f || !t || !s) {
-        div.classList.add('invalid');
-        div.querySelector('.subtotal').textContent = '小計：-- 元';
-        hasInvalid = true;
-        return;
+      const fullNote = div.querySelector('.flavorNote')?.value || '';
+      const shortNote = fullNote.split(' ')[0];
+      if (!f) {
+        div.classList.add('invalid'); hasInvalid = true;
+        div.querySelector('.subtotal').textContent = '小計：-- 元'; return;
       }
-      label = `${f}${note.split(' ')[0]}${t}${s}`;
+      label = `${f}${shortNote}${t}${s}`;
       price = f === '萌' ? 65 : f === '美'
-        ? (s === '內用' ? 35 : 45)
-        : (s === '內用' ? 55 : 85);
+        ? (s === '內' ? 35 : s === '外自' ? 45 : 55)
+        : (s === '內' ? 55 : s === '外自' ? 85 : 95);
       coffeeQty += qty;
     }
 
