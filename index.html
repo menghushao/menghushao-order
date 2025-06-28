@@ -37,6 +37,7 @@
     }
 
     .wrap-with-hint { position: relative; }
+
     .hint-icon {
       position: absolute;
       top: -6px;
@@ -261,12 +262,16 @@
     <div id="datetimeContainer">
       <label id="datetimeLabel" for="datetimePicker">取餐時間：</label>
       <input type="datetime-local" id="datetimePicker" />
+      <button onclick="clearDatetime()">❌</button>
     </div>
 
     <div id="distanceContainer">
-      <label id="distanceLabel" for="distanceInput">填入您距離苗栗市中山路203號萌虎燒的距離，例如8.3公里</label>
+      <label id="distanceLabel" for="distanceInput">
+        填入您與苗栗市中山路203號萌虎燒的距離，建議透過GOOGLE地圖避開收費路段
+      </label>
       <input type="number" id="distanceInput" min="0" step="0.1" placeholder="例如 5.3" />
       <span id="distanceMsg"></span>
+      <button onclick="clearDistance()">❌</button>
     </div>
   </div>
 
@@ -312,13 +317,11 @@ const coffeeFlavors = [
   "胡椒 烘焙程度75% 咖啡因55mg"
 ];
 
-// 🔧 控制狀態變數
 let orderCounters = { cake: 0, drink: 0, coffee: 0 };
 let allOrders = [];
 let selectedDatetime = "";
 let cityDistance = 0;
 
-// 🛵 市外配送門檻計算（新版規則）
 function calcDeliveryThreshold(km) {
   const fullKM = Math.ceil(km);
   if (fullKM <= 3) return 300;
@@ -337,6 +340,20 @@ function showDatetimePicker() {
 
 function showDistanceInput() {
   document.getElementById("distanceContainer").style.display = "flex";
+}
+
+function clearDatetime() {
+  document.getElementById("datetimePicker").value = "";
+  selectedDatetime = "";
+  document.getElementById("datetimeContainer").style.display = "none";
+  recalculateAll();
+}
+
+function clearDistance() {
+  document.getElementById("distanceInput").value = "";
+  cityDistance = 0;
+  document.getElementById("distanceContainer").style.display = "none";
+  recalculateAll();
 }
 
 document.getElementById("datetimePicker").addEventListener("change", e => {
@@ -393,7 +410,6 @@ function addOrder(type) {
   div.innerHTML = content;
   document.getElementById("orderArea").appendChild(div);
 
-  // 如果是咖啡，加入判斷萌翻強制內用
   if (type === "coffee") {
     const sel = div.querySelector(".coffeeType");
     const placeSel = div.querySelector(".place");
@@ -408,7 +424,6 @@ function addOrder(type) {
     });
   }
 
-  // 綁定欄位變動事件
   div.querySelectorAll("select, input").forEach(el =>
     el.addEventListener("input", recalculateAll)
   );
@@ -417,7 +432,6 @@ function addOrder(type) {
   recalculateAll();
 }
 
-// ✅ 修復後的 removeOrder 函式
 function removeOrder(id, type) {
   const el = document.querySelector(`[data-id="${id}"]`);
   if (el) el.remove();
@@ -544,7 +558,7 @@ function recalculateAll() {
     <p style="color:green">折抵金額：${discount} 元</p>
     <p style="color:#004aad">可獲得集點卡 ${points} 點</p>
     ${dtText}
-    ${hasInvalid ? `<p style="color:red;">❗ 有組合尚未填寫完成</p>` : ''}
+    ${hasInvalid ? `<p style="color:red;">❗ 尚有訂單組合未完成</p>` : ''}
     <p style="color:#555">${summaryText}</p>
     <div class="summary-buttons">
       <button class="circle-button" onclick="window.open('https://reurl.cc/qZAE2y', '_blank')">
@@ -597,14 +611,14 @@ function copySummary() {
   });
 
   if (!hasValid) {
-  alert("⚠️ 還沒有正確的訂單，請確認品項是否填寫完成。");
-  return;
-}
+    alert("⚠️ 還沒有正確的訂單，請確認品項是否填寫完成。");
+    return;
+  }
 
-if (document.querySelector('.combo-block.invalid')) {
-  alert("❗ 尚有訂單組合未完成");
-  return;
-}
+  if (document.querySelector('.combo-block.invalid')) {
+    alert("❗ 尚有訂單組合未完成");
+    return;
+  }
 
   const summaryText = Object.entries(summaryMap)
     .map(([k, v]) => `${k}×${v}`)
