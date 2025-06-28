@@ -597,9 +597,14 @@ function copySummary() {
   });
 
   if (!hasValid) {
-    alert("⚠️ 還沒有正確的訂單，請確認品項是否填寫完成。");
-    return;
-  }
+  alert("⚠️ 還沒有正確的訂單，請確認品項是否填寫完成。");
+  return;
+}
+
+if (document.querySelector('.combo-block.invalid')) {
+  alert("❗ 尚有訂單組合未完成");
+  return;
+}
 
   const summaryText = Object.entries(summaryMap)
     .map(([k, v]) => `${k}×${v}`)
