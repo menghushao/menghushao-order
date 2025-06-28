@@ -5,10 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>萌虎燒點餐系統</title>
   <style>
-    html {
-      font-size: 4vw;
-    }
-
+    html { font-size: 4vw; }
     body {
       font-family: "Segoe UI", sans-serif;
       margin: 0;
@@ -27,37 +24,19 @@
     }
 
     #summary {
-      font-size: 1rem;
-      line-height: 1.6;
+      font-size: 0.95rem;
+      line-height: 1.2;
       margin-bottom: 1em;
     }
 
     .type-buttons {
       display: flex;
-      gap: 0.6em;
       flex-wrap: wrap;
+      gap: 0.5em;
       align-items: center;
     }
 
-    .wrap-with-hint {
-      position: relative;
-    }
-
-    .type-buttons button {
-      font-size: 1rem;
-      padding: 0.6em 1em;
-      background: #ff9800;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      position: relative;
-    }
-
-    .type-buttons button:hover {
-      background: #e68900;
-    }
-
+    .wrap-with-hint { position: relative; }
     .hint-icon {
       position: absolute;
       top: -6px;
@@ -86,7 +65,7 @@
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       padding: 1em;
-      min-width: 13em;
+      min-width: 12em;
       max-width: 80vw;
       z-index: 999;
       font-size: 0.9rem;
@@ -94,9 +73,7 @@
       white-space: normal;
     }
 
-    .wrap-with-hint:hover .hint-box {
-      display: block;
-    }
+    .wrap-with-hint:hover .hint-box { display: block; }
 
     .hint-box strong {
       display: block;
@@ -109,6 +86,34 @@
       height: auto;
       vertical-align: middle;
       margin-right: 0.4em;
+    }
+
+    .type-buttons button {
+      font-size: 1rem;
+      padding: 0.6em 1em;
+      background: #ff9800;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .type-buttons button:hover { background: #e68900; }
+
+    #datetimeContainer,
+    #distanceContainer {
+      margin-top: 0.5em;
+      display: none;
+      align-items: center;
+      gap: 0.5em;
+      flex-wrap: wrap;
+    }
+
+    #distanceMsg {
+      font-size: 0.9rem;
+      color: #333;
+      white-space: nowrap;
     }
 
     .combo-block {
@@ -188,31 +193,6 @@
       font-size: 1rem;
     }
 
-    #datetimeContainer,
-    #distanceContainer {
-      margin-top: 0.5em;
-      display: none;
-      align-items: center;
-      gap: 0.5em;
-      flex-wrap: wrap;
-    }
-
-    #datetimeLabel,
-    #distanceLabel {
-      font-weight: bold;
-    }
-
-    #distanceInput,
-    #datetimePicker {
-      font-size: 1rem;
-    }
-
-    #distanceMsg {
-      font-size: 0.9rem;
-      color: #333;
-      white-space: nowrap;
-    }
-
     @media (min-width: 768px) {
       html { font-size: 16px; }
     }
@@ -273,7 +253,7 @@
         <div class="hint-box">
           <strong>市外配送說明</strong>
           <p>單次消費滿 300 元，苗栗市門牌可外送。</p>
-          <p style="margin-bottom:0;">市外請提前與老闆確認可行性。</p>
+          <p style="margin-bottom: 0;">市外請提前與老闆確認可行性。</p>
         </div>
       </div>
     </div>
@@ -293,23 +273,23 @@
   <div id="orderArea"></div>
   <script>
 const cakeTypeMap = {
-  "純":   { type: "pure", price: 10 },
-  "巧":   { type: "single", price: 15 },
-  "奶":   { type: "single", price: 15 },
-  "鹹":   { type: "single", price: 15 },
-  "抹":   { type: "single", price: 15 },
-  "紅":   { type: "single", price: 15 },
-  "芝":   { type: "single", price: 15 },
-  "蒜":   { type: "single", price: 15 },
-  "花":   { type: "single", price: 15 },
-  "莓":   { type: "single", price: 15 },
-  "酪":   { type: "double", price: 20 },
+  "純": { type: "pure", price: 10 },
+  "巧": { type: "single", price: 15 },
+  "奶": { type: "single", price: 15 },
+  "鹹": { type: "single", price: 15 },
+  "抹": { type: "single", price: 15 },
+  "紅": { type: "single", price: 15 },
+  "芝": { type: "single", price: 15 },
+  "蒜": { type: "single", price: 15 },
+  "花": { type: "single", price: 15 },
+  "莓": { type: "single", price: 15 },
+  "酪": { type: "double", price: 20 },
   "奶鹹": { type: "double", price: 20 },
   "巧花": { type: "double", price: 20 },
   "巧芝": { type: "double", price: 20 },
   "抹巧": { type: "double", price: 20 },
   "抹紅": { type: "double", price: 20 },
-  "濃":   { type: "double", price: 20 }
+  "濃": { type: "double", price: 20 }
 };
 
 const drinkOptions = [
@@ -332,22 +312,17 @@ const coffeeFlavors = [
   "胡椒 烘焙程度75% 咖啡因55mg"
 ];
 
-// 🔧 狀態控制
+// 🔧 控制狀態變數
 let orderCounters = { cake: 0, drink: 0, coffee: 0 };
 let allOrders = [];
 let selectedDatetime = "";
 let cityDistance = 0;
 
-// ✅ 市外金額門檻邏輯函式
+// 🛵 市外配送門檻計算（新版規則）
 function calcDeliveryThreshold(km) {
   const fullKM = Math.ceil(km);
   if (fullKM <= 3) return 300;
-
-  if (fullKM <= 15) {
-    return 300 + (fullKM - 3) * 100;
-  }
-
-  // 超過 15 公里後：所有第 4 公里起都用 150 元計算
+  if (fullKM <= 15) return 300 + (fullKM - 3) * 100;
   return 300 + (fullKM - 3) * 150;
 }
 </script>
@@ -418,7 +393,7 @@ function addOrder(type) {
   div.innerHTML = content;
   document.getElementById("orderArea").appendChild(div);
 
-  // 如果是咖啡，要加判斷「萌翻內用限定」
+  // 如果是咖啡，加入判斷萌翻強制內用
   if (type === "coffee") {
     const sel = div.querySelector(".coffeeType");
     const placeSel = div.querySelector(".place");
@@ -433,12 +408,29 @@ function addOrder(type) {
     });
   }
 
-  // 綁定所有輸入事件，即時重算
+  // 綁定欄位變動事件
   div.querySelectorAll("select, input").forEach(el =>
     el.addEventListener("input", recalculateAll)
   );
 
   allOrders.push({ id, type });
+  recalculateAll();
+}
+
+// ✅ 修復後的 removeOrder 函式
+function removeOrder(id, type) {
+  const el = document.querySelector(`[data-id="${id}"]`);
+  if (el) el.remove();
+  allOrders = allOrders.filter(o => o.id !== id);
+  orderCounters[type]--;
+
+  let count = 0;
+  document.querySelectorAll(`.combo-block[data-type="${type}"]`).forEach(block => {
+    count++;
+    const title = block.querySelector(".title");
+    if (title) title.textContent = `第 ${count} 組 - ${type === "cake" ? "雞蛋糕" : type === "drink" ? "飲品" : "咖啡"} 訂單`;
+  });
+
   recalculateAll();
 }
 </script>
@@ -464,8 +456,7 @@ function recalculateAll() {
       }
       label = [f1, f2].sort().join('+');
       price = f1 === f2
-        ? (cakeTypeMap[f1].type === 'pure' ? 20
-            : cakeTypeMap[f1].type === 'single' ? 30 : 35)
+        ? (cakeTypeMap[f1].type === 'pure' ? 20 : cakeTypeMap[f1].type === 'single' ? 30 : 35)
         : cakeTypeMap[f1].price + cakeTypeMap[f2].price;
       cakeQty += qty;
     } else if (div.querySelector('.drinkFlavor')) {
@@ -539,12 +530,10 @@ function recalculateAll() {
   const summaryText = sortedSummary.map(([k, v]) => `${k}×${v}`).join('、');
   const dtText = selectedDatetime ? `<p><strong>預計取餐：</strong>${selectedDatetime.replace('T', ' ')}</p>` : '';
 
-  // 📏 新版距離門檻與訊息
   if (cityDistance > 0) {
     const required = calcDeliveryThreshold(cityDistance);
-    const current = total - discount;
-    const msg = `滿 ${required} 元方可為您外送，詳細請與老闆聯繫`;
-    document.getElementById('distanceMsg').textContent = msg;
+    document.getElementById('distanceMsg').textContent =
+      `滿 ${required} 元方可為您外送，詳細請與老闆聯繫`;
   } else {
     document.getElementById('distanceMsg').textContent = '';
   }
@@ -612,7 +601,10 @@ function copySummary() {
     return;
   }
 
-  const summaryText = Object.entries(summaryMap).map(([k, v]) => `${k}×${v}`).join('、');
+  const summaryText = Object.entries(summaryMap)
+    .map(([k, v]) => `${k}×${v}`)
+    .join('、');
+
   const textToCopy = selectedDatetime
     ? `${summaryText}，取餐時間 ${selectedDatetime.replace('T', ' ')}`
     : summaryText;
