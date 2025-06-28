@@ -36,6 +36,7 @@
       display: flex;
       gap: 0.5em;
       flex-wrap: wrap;
+      align-items: center;
     }
 
     .type-buttons button {
@@ -51,6 +52,30 @@
 
     .type-buttons button:hover {
       background: #e68900;
+    }
+
+    .type-buttons .help-icon {
+      font-size: 1rem;
+      background: transparent;
+      border: none;
+      cursor: help;
+      padding: 0 0.5em;
+      color: #333;
+    }
+
+    #datetimeContainer {
+      margin-top: 0.5em;
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+    }
+
+    #datetimeLabel {
+      font-weight: bold;
+    }
+
+    #datetimePicker {
+      font-size: 1rem;
     }
 
     .combo-block {
@@ -96,6 +121,39 @@
       cursor: pointer;
     }
 
+    .summary-buttons {
+      display: flex;
+      gap: 0.5em;
+      margin-top: 1em;
+      flex-wrap: wrap;
+    }
+
+    .circle-button {
+      width: 2.4em;
+      height: 2.4em;
+      border-radius: 50%;
+      border: none;
+      background-color: #ececec;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .circle-button img {
+      width: 1.2em;
+      height: 1.2em;
+    }
+
+    .copy-button {
+      border-radius: 6px;
+      padding: 0.4em 0.8em;
+      background-color: #ccc;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
     @media (min-width: 768px) {
       html { font-size: 16px; }
     }
@@ -104,10 +162,23 @@
 <body>
   <div id="fixedHeader">
     <div id="summary">🔢 尚未選擇任何品項</div>
+
     <div class="type-buttons">
       <button onclick="addOrder('cake')">➕ 雞蛋糕</button>
+      <button class="help-icon" title="一份2顆，可混搭不同口味。\n純雞蛋糕：2顆20元，組合價10元\n單餡雞蛋糕：2顆30元，組合價15元\n雙餡雞蛋糕：2顆35元，組合價20元">❓</button>
+
       <button onclick="addOrder('drink')">➕ 飲品</button>
+      <button class="help-icon" title="冬瓜茶：內用240mL 10元，外帶480mL 25元\n冬瓜鮮奶：內用240mL 25元，外帶480mL 45元">❓</button>
+
       <button onclick="addOrder('coffee')">➕ 咖啡</button>
+      <button class="help-icon" title="美式：內用35元，外帶55元\n拿鐵：內用55元，外帶95元\n萌翻拿鐵（限內用）65元">❓</button>
+
+      <button onclick="showDatetimePicker()">⏰ 預計取餐時間</button>
+    </div>
+
+    <div id="datetimeContainer" style="display:none;">
+      <label id="datetimeLabel" for="datetimePicker">取餐時間：</label>
+      <input type="datetime-local" id="datetimePicker" />
     </div>
   </div>
 
@@ -153,45 +224,49 @@ const coffeeFlavors = [
   "胡椒 烘焙程度75% 咖啡因55mg"
 ];
 
-// 組別控制變數
-let orderCounters = {
-  cake: 0,
-  drink: 0,
-  coffee: 0
-};
-
+let orderCounters = { cake: 0, drink: 0, coffee: 0 };
 let allOrders = [];
+let selectedDatetime = "";
 
 function generateItemId() {
   return Math.random().toString(36).substr(2, 9);
 }
-</script>
-<script>
+
+function showDatetimePicker() {
+  const box = document.getElementById("datetimeContainer");
+  box.style.display = "flex";
+}
+
+document.getElementById("datetimePicker").addEventListener("change", e => {
+  selectedDatetime = e.target.value;
+  recalculateAll();
+});
+
 function addOrder(type) {
   const id = generateItemId();
   const index = ++orderCounters[type];
-  const div = document.createElement('div');
-  div.className = 'combo-block';
+  const div = document.createElement("div");
+  div.className = "combo-block";
   div.dataset.id = id;
   div.dataset.type = type;
 
-  let title = `第 ${index} 組 - ${type === 'cake' ? '雞蛋糕' : type === 'drink' ? '飲品' : '咖啡'} 訂單`;
+  let title = `第 ${index} 組 - ${type === "cake" ? "雞蛋糕" : type === "drink" ? "飲品" : "咖啡"} 訂單`;
   let content = `<h3 class="title">${title}</h3>`;
 
-  if (type === 'cake') {
+  if (type === "cake") {
     const opts = Object.keys(cakeTypeMap).map(f => `<option value="${f}">${f}</option>`).join('');
     content += `
       <select class="c1"><option value="">第一顆口味</option>${opts}</select>
       <select class="c2"><option value="">第二顆口味（可空）</option>${opts}</select>
     `;
-  } else if (type === 'drink') {
+  } else if (type === "drink") {
     const opts = drinkOptions.map(o => `<option value="${o.value}">${o.label}</option>`).join('');
     content += `
       <select class="drinkFlavor"><option value="">飲品口味</option>${opts}</select>
       <select class="coldness"><option value="">冰塊</option><option>冰</option><option>去冰</option></select>
       <select class="place"><option value="">內用/外帶</option><option value="內">內</option><option value="外">外</option><option value="外自">外自</option></select>
     `;
-  } else if (type === 'coffee') {
+  } else if (type === "coffee") {
     const typeOpts = coffeeTypes.map(o => `<option value="${o.value}">${o.label}</option>`).join('');
     const flavorOpts = coffeeFlavors.map(f => `<option>${f}</option>`).join('');
     content += `
@@ -209,15 +284,14 @@ function addOrder(type) {
   `;
 
   div.innerHTML = content;
-  document.getElementById('orderArea').appendChild(div);
+  document.getElementById("orderArea").appendChild(div);
 
-  // 萌翻限制內用
-  if (type === 'coffee') {
-    const sel = div.querySelector('.coffeeType');
-    const placeSel = div.querySelector('.place');
-    sel.addEventListener('change', () => {
-      if (sel.value === '萌') {
-        placeSel.value = '內';
+  if (type === "coffee") {
+    const sel = div.querySelector(".coffeeType");
+    const placeSel = div.querySelector(".place");
+    sel.addEventListener("change", () => {
+      if (sel.value === "萌") {
+        placeSel.value = "內";
         placeSel.disabled = true;
       } else {
         placeSel.disabled = false;
@@ -226,32 +300,31 @@ function addOrder(type) {
     });
   }
 
-  div.querySelectorAll('select, input').forEach(el =>
-    el.addEventListener('input', recalculateAll)
+  div.querySelectorAll("select, input").forEach(el =>
+    el.addEventListener("input", recalculateAll)
   );
 
   allOrders.push({ id, type });
   recalculateAll();
 }
-
+</script>
+<script>
 function removeOrder(id, type) {
   const el = document.querySelector(`[data-id="${id}"]`);
   if (el) el.remove();
   allOrders = allOrders.filter(o => o.id !== id);
   orderCounters[type]--;
 
-  // 重編號該類型
   let count = 0;
   document.querySelectorAll(`.combo-block[data-type="${type}"]`).forEach(block => {
     count++;
-    const title = block.querySelector('.title');
-    if (title) title.textContent = `第 ${count} 組 - ${type === 'cake' ? '雞蛋糕' : type === 'drink' ? '飲品' : '咖啡'} 訂單`;
+    const title = block.querySelector(".title");
+    if (title) title.textContent = `第 ${count} 組 - ${type === "cake" ? "雞蛋糕" : type === "drink" ? "飲品" : "咖啡"} 訂單`;
   });
 
   recalculateAll();
 }
-</script>
-<script>
+
 function recalculateAll() {
   let total = 0, discount = 0, points = 0;
   let cakeQty = 0, drinkQty = 0, coffeeQty = 0;
@@ -282,7 +355,7 @@ function recalculateAll() {
       const f = div.querySelector('.drinkFlavor').value;
       const t = div.querySelector('.coldness')?.value;
       const s = div.querySelector('.place')?.value;
-      if (!f) {
+      if (!f || !t || !s) {
         div.classList.add('invalid'); hasInvalid = true;
         div.querySelector('.subtotal').textContent = '小計：-- 元'; return;
       }
@@ -297,7 +370,7 @@ function recalculateAll() {
       const s = div.querySelector('.place')?.value;
       const fullNote = div.querySelector('.flavorNote')?.value || '';
       const shortNote = fullNote.split(' ')[0];
-      if (!f) {
+      if (!f || !t || !s) {
         div.classList.add('invalid'); hasInvalid = true;
         div.querySelector('.subtotal').textContent = '小計：-- 元'; return;
       }
@@ -328,11 +401,7 @@ function recalculateAll() {
   const rest = flatItems.slice(i);
   const restSum = rest.reduce((sum, x) => sum + x.price, 0);
   const restQty = rest.length;
-  if (restQty >= 6) {
-    points += Math.floor(restSum / 60) * 2;
-  } else {
-    points += Math.floor(restSum / 60);
-  }
+  points += Math.floor(restSum / 60) * (restQty >= 6 ? 2 : 1);
 
   const totalQty = cakeQty + drinkQty + coffeeQty;
   const typeSummary = [
@@ -352,15 +421,71 @@ function recalculateAll() {
 
   const summaryText = sortedSummary.map(([k, v]) => `${k}×${v}`).join('、');
 
+  const dtText = selectedDatetime ? `<p><strong>預計取餐：</strong>${selectedDatetime.replace('T', ' ')}</p>` : '';
+
   document.getElementById('summary').innerHTML = `
     <p><strong>總金額：</strong>${total - discount} 元</p>
     <p>${typeSummary}，總計 ${totalQty} 份</p>
     <p style="color:green">折抵金額：${discount} 元</p>
     <p style="color:#004aad">可獲得集點卡 ${points} 點</p>
+    ${dtText}
     ${hasInvalid ? `<p style="color:red;">❗ 有組合尚未填寫完成</p>` : ''}
     <p style="color:#555">${summaryText}</p>
+    <div class="summary-buttons">
+      <button class="circle-button" onclick="window.open('https://reurl.cc/qZAE2y', '_blank')">
+        <img src="https://scdn.line-apps.com/n/line_add_friends/btn/zh-Hant.png" alt="LINE" />
+      </button>
+      <button class="circle-button" onclick="window.open('https://www.facebook.com/menghushao', '_blank')">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="FB" />
+      </button>
+      <button class="copy-button" onclick="copySummary()">複製摘要</button>
+    </div>
   `;
 }
 </script>
+<script>
+function copySummary() {
+  const summaryMap = {};
+  document.querySelectorAll(".combo-block").forEach(div => {
+    const qty = +div.querySelector(".qty")?.value || 1;
+    let label = "";
+
+    if (div.querySelector('.c1')) {
+      const f1 = div.querySelector('.c1')?.value;
+      const f2 = div.querySelector('.c2')?.value || f1;
+      if (!f1) return;
+      label = [f1, f2].sort().join('+');
+    } else if (div.querySelector('.drinkFlavor')) {
+      const f = div.querySelector('.drinkFlavor')?.value;
+      const t = div.querySelector('.coldness')?.value;
+      const s = div.querySelector('.place')?.value;
+      if (!f || !t || !s) return;
+      label = `${f}${t}${s}`;
+    } else if (div.querySelector('.coffeeType')) {
+      const f = div.querySelector('.coffeeType')?.value;
+      const t = div.querySelector('.temp')?.value;
+      const s = div.querySelector('.place')?.value;
+      const fullNote = div.querySelector('.flavorNote')?.value || '';
+      const shortNote = fullNote.split(' ')[0];
+      if (!f || !t || !s) return;
+      label = `${f}${shortNote}${t}${s}`;
+    }
+
+    summaryMap[label] = (summaryMap[label] || 0) + qty;
+  });
+
+  const summaryText = Object.entries(summaryMap).map(([k, v]) => `${k}×${v}`).join('、');
+  const textToCopy = selectedDatetime
+    ? `${summaryText}，取餐時間${selectedDatetime.replace('T', ' ')}`
+    : summaryText;
+
+  navigator.clipboard.writeText(textToCopy).then(() => {
+    alert("已複製訂單摘要！");
+  }).catch(() => {
+    alert("⚠️ 複製失敗，請手動選取");
+  });
+}
+</script>
+
 </body>
 </html>
