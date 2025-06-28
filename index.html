@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>萌虎燒互動點餐</title>
+  <title>萌虎燒點餐系統</title>
   <style>
     html {
       font-size: 4vw;
@@ -89,6 +89,11 @@
       cursor: pointer;
     }
 
+    .combo-block.invalid {
+      background-color: #ffecec;
+      border-left-color: #e53935;
+    }
+
     @media (min-width: 768px) {
       html { font-size: 16px; }
     }
@@ -107,67 +112,39 @@
   <script>
 const cakeTypeMap = {
   '純': { type: 'pure', price: 20 },
-  '巧': { type: 'single', price: 30 },
-  // 若未來有雙口味等請擴充
+  '巧': { type: 'single', price: 30 }
+  // 若未來擴充雙口味請在此定義
 };
+
+let orderCounters = {
+  cake: 0,
+  drink: 0,
+  coffee: 0
+};
+
+let allOrders = [];
 
 function generateItemId() {
   return Math.random().toString(36).substr(2, 9);
 }
-
-let allOrders = [];
 </script>
 <script>
-function addOrder(type) {
-  const id = generateItemId();
-  const div = document.createElement('div');
-  div.className = 'combo-block';
-  div.dataset.id = id;
-  div.dataset.type = type;
+const cakeTypeMap = {
+  '純': { type: 'pure', price: 20 },
+  '巧': { type: 'single', price: 30 }
+  // 若未來擴充雙口味請在此定義
+};
 
-  let content = `<h3>第 ${allOrders.length + 1} 組 - ${type === 'cake' ? '雞蛋糕' : type === 'drink' ? '飲品' : '咖啡'} 訂單</h3>`;
+let orderCounters = {
+  cake: 0,
+  drink: 0,
+  coffee: 0
+};
 
-  if (type === 'cake') {
-    content += `
-      <select class="c1"><option value="">第一口味</option><option value="純">純</option><option value="巧">巧</option></select>
-      <select class="c2"><option value="">第二口味（可空）</option><option value="純">純</option><option value="巧">巧</option></select>
-    `;
-  } else if (type === 'drink') {
-    content += `
-      <select class="flavor"><option value="">飲品口味</option><option value="紅">紅</option><option value="烏">烏</option><option value="冬">冬</option><option value="抹">抹</option><option value="鮮">鮮</option></select>
-      <select class="coldness"><option value="冰">冰</option><option value="熱">熱</option></select>
-      <select class="size"><option value="內">內用</option><option value="外自">外帶</option><option value="外熊">熊貓</option></select>
-    `;
-  } else if (type === 'coffee') {
-    content += `
-      <select class="coffeeType"><option value="">咖啡種類</option><option value="萌">萌</option><option value="美">美</option><option value="拿">拿</option></select>
-      <input class="flavorNote" placeholder="風味備註（可空）" />
-      <select class="temp"><option value="冰">冰</option><option value="熱">熱</option></select>
-      <select class="size"><option value="內">內用</option><option value="外自">外帶</option><option value="外熊">熊貓</option></select>
-    `;
-  }
+let allOrders = [];
 
-  content += `
-    <input type="number" class="qty" placeholder="份數" min="1" value="1" />
-    <div class="subtotal">小計：</div>
-    <button class="removeBtn" onclick="removeOrder('${id}')">移除此組</button>
-  `;
-
-  div.innerHTML = content;
-  div.querySelectorAll('select, input').forEach(el => {
-    el.addEventListener('input', recalculateAll);
-  });
-
-  document.getElementById('orderArea').appendChild(div);
-  allOrders.push({ id, type });
-  recalculateAll();
-}
-
-function removeOrder(id) {
-  const el = document.querySelector(`[data-id="${id}"]`);
-  if (el) el.remove();
-  allOrders = allOrders.filter(o => o.id !== id);
-  recalculateAll();
+function generateItemId() {
+  return Math.random().toString(36).substr(2, 9);
 }
 </script>
 <script>
@@ -180,36 +157,52 @@ function recalculateAll() {
   document.querySelectorAll('.combo-block').forEach(div => {
     const type = div.dataset.type;
     const qty = +div.querySelector('.qty')?.value || 1;
+    div.classList.remove('invalid');
     let label = '', price = 0;
 
     if (type === 'cake') {
       const f1 = div.querySelector('.c1')?.value;
       const f2 = div.querySelector('.c2')?.value || f1;
-      if (!f1 || !cakeTypeMap[f1] || !cakeTypeMap[f2]) return;
+      if (!f1 || !cakeTypeMap[f1] || !cakeTypeMap[f2]) {
+        div.classList.add('invalid');
+        div.querySelector('.subtotal').textContent = '小計：-- 元';
+        return;
+      }
       label = [f1, f2].sort().join('+');
       price = f1 === f2
         ? (cakeTypeMap[f1].type === 'pure' ? 20 : cakeTypeMap[f1].type === 'single' ? 30 : 35)
         : cakeTypeMap[f1].price + cakeTypeMap[f2].price;
       cakeQty += qty;
-    } else if (type === 'drink') {
-      const f = div.querySelector('.flavor')?.value;
+    }
+
+    if (type === 'drink') {
+      const f = div.querySelector('.drinkFlavor')?.value;
       const t = div.querySelector('.coldness')?.value;
-      const s = div.querySelector('.size')?.value;
-      if (!f || !t || !s) return;
+      const s = div.querySelector('.place')?.value;
+      if (!f || !t || !s) {
+        div.classList.add('invalid');
+        div.querySelector('.subtotal').textContent = '小計：-- 元';
+        return;
+      }
       label = `${f}${t}${s}`;
-      price = f === '冬' ? (s === '內' ? 10 : s === '外自' ? 15 : 25)
-                         : (s === '內' ? 25 : s === '外自' ? 35 : 45);
+      price = 30; // 🧃 飲品價格你可依項目調整
       drinkQty += qty;
-    } else if (type === 'coffee') {
+    }
+
+    if (type === 'coffee') {
       const f = div.querySelector('.coffeeType')?.value;
       const t = div.querySelector('.temp')?.value;
-      const s = div.querySelector('.size')?.value;
+      const s = div.querySelector('.place')?.value;
       const note = div.querySelector('.flavorNote')?.value || '';
-      if (!f || !t || !s) return;
+      if (!f || !t || !s) {
+        div.classList.add('invalid');
+        div.querySelector('.subtotal').textContent = '小計：-- 元';
+        return;
+      }
       label = `${f}${note.split(' ')[0]}${t}${s}`;
       price = f === '萌' ? 65 : f === '美'
-        ? (s === '內' ? 35 : s === '外自' ? 45 : 55)
-        : (s === '內' ? 55 : s === '外自' ? 85 : 95);
+        ? (s === '內用' ? 35 : 45)
+        : (s === '內用' ? 55 : 85);
       coffeeQty += qty;
     }
 
@@ -219,8 +212,8 @@ function recalculateAll() {
     div.querySelector('.subtotal').textContent = `小計：${price * qty} 元`;
   });
 
+  // 折扣與點數計算邏輯（12份送1點，餘下滿60送點）
   flatItems.sort((a, b) => b.price - a.price);
-
   let i = 0;
   while (i + 12 <= flatItems.length) {
     const group = flatItems.slice(i, i + 12);
@@ -229,26 +222,22 @@ function recalculateAll() {
     points += 1;
     i += 12;
   }
-
   const rest = flatItems.slice(i);
   const restSum = rest.reduce((sum, x) => sum + x.price, 0);
   const restQty = rest.length;
-  if (restQty >= 6) {
-    points += Math.floor(restSum / 60) * 2;
-  } else {
-    points += Math.floor(restSum / 60);
-  }
+  points += restQty >= 6 ? Math.floor(restSum / 60) * 2 : Math.floor(restSum / 60);
 
-  const sortedSummary = Object.entries(summaryMap).sort(([a], [b]) => {
-    const getType = (label) => {
-      if (label.includes('+')) return 0;
-      if (/冬|紅|抹|烏|鮮/.test(label)) return 1;
-      return 2;
-    };
-    return getType(a) - getType(b);
-  });
+  const summaryText = Object.entries(summaryMap)
+    .sort(([a], [b]) => {
+      const getType = (label) => {
+        if (label.includes('+')) return 0;
+        if (/檸檬|奶茶|豆漿/.test(label)) return 1;
+        return 2;
+      };
+      return getType(a) - getType(b);
+    })
+    .map(([k, v]) => `${k}×${v}`).join('、');
 
-  const summaryText = sortedSummary.map(([k, v]) => `${k}×${v}`).join('、');
   const typeLine = [
     cakeQty ? `雞蛋糕 ${cakeQty} 份` : null,
     drinkQty ? `飲品 ${drinkQty} 份` : null,
