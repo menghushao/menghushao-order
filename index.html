@@ -39,7 +39,7 @@
       align-items: center;
     }
 
-    .type-buttons .wrap-with-hint {
+    .wrap-with-hint {
       position: relative;
     }
 
@@ -58,7 +58,7 @@
       background: #e68900;
     }
 
-    .type-buttons .hint-icon {
+    .hint-icon {
       position: absolute;
       top: -6px;
       right: -6px;
@@ -75,23 +75,40 @@
       cursor: help;
     }
 
-    .type-buttons .hint-icon:hover::after {
-      content: attr(data-tip);
+    .hint-box {
+      display: none;
       position: absolute;
       top: 140%;
       left: 50%;
       transform: translateX(-50%);
       background: #fff;
-      color: #222;
-      border: 1px solid #aaa;
-      border-radius: 6px;
-      padding: 0.6em;
-      white-space: pre-line;
-      font-size: 0.9rem;
-      width: max-content;
-      max-width: 90vw;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      padding: 1em;
+      min-width: 12em;
+      max-width: 80vw;
       z-index: 999;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      white-space: pre-wrap;
+    }
+
+    .wrap-with-hint:hover .hint-box {
+      display: block;
+    }
+
+    .hint-box strong {
+      display: block;
+      font-size: 1rem;
+      margin-bottom: 0.4em;
+    }
+
+    .hint-box img {
+      width: 2.5em;
+      height: auto;
+      vertical-align: middle;
+      margin-right: 0.4em;
     }
 
     .combo-block {
@@ -142,6 +159,7 @@
       flex-wrap: wrap;
       gap: 0.5em;
       margin-top: 1em;
+      align-items: center;
     }
 
     .circle-button {
@@ -191,8 +209,8 @@
       font-weight: bold;
     }
 
-    #datetimePicker,
-    #distanceInput {
+    #distanceInput,
+    #datetimePicker {
       font-size: 1rem;
     }
 
@@ -217,21 +235,52 @@
 
       <div class="wrap-with-hint">
         <button onclick="addOrder('cake')">➕ 雞蛋糕</button>
-        <span class="hint-icon" data-tip="一份 2 顆，可混搭不同口味。\n純雞蛋糕：20 元，單餡：30 元，雙餡：35 元">?</span>
+        <span class="hint-icon">?</span>
+        <div class="hint-box">
+          <strong>雞蛋糕組合說明</strong>
+          <p>每組為 2 顆，可混搭不同口味</p>
+          <ul>
+            <li>純口味：20 元</li>
+            <li>單餡口味：30 元</li>
+            <li>雙餡口味：35 元</li>
+          </ul>
+        </div>
       </div>
 
       <div class="wrap-with-hint">
         <button onclick="addOrder('drink')">➕ 飲品</button>
-        <span class="hint-icon" data-tip="冬瓜茶：內用 240ml / 10 元，外帶 480ml / 25 元\n冬瓜鮮奶：內用 240ml / 25 元，外帶 480ml / 45 元">?</span>
+        <span class="hint-icon">?</span>
+        <div class="hint-box">
+          <strong>飲品價格</strong>
+          <p>依內用／外帶、容量區分</p>
+          <ul>
+            <li>冬瓜茶：內用 240ml / 10 元、外帶 480ml / 25 元</li>
+            <li>冬瓜鮮奶：內用 240ml / 25 元、外帶 480ml / 45 元</li>
+          </ul>
+        </div>
       </div>
 
       <div class="wrap-with-hint">
         <button onclick="addOrder('coffee')">➕ 咖啡</button>
-        <span class="hint-icon" data-tip="美式：內用 35 元，外帶 55 元\n拿鐵：內用 55 元，外帶 95 元\n萌翻拿鐵（限內用）：65 元">?</span>
+        <span class="hint-icon">?</span>
+        <div class="hint-box">
+          <strong>咖啡選擇說明</strong>
+          <ul>
+            <li>美式：內用 35 元／外帶 55 元</li>
+            <li>拿鐵：內用 55 元／外帶 95 元</li>
+            <li>萌翻拿鐵：限內用，65 元</li>
+          </ul>
+        </div>
       </div>
 
       <div class="wrap-with-hint">
         <button onclick="showDistanceInput()">📏 市外距離</button>
+        <span class="hint-icon">?</span>
+        <div class="hint-box">
+          <strong>市外配送說明</strong>
+          <p>單次消費滿 300 元，苗栗市門牌可外送。</p>
+          <p style="margin-bottom: 0;">市外請提前與老闆確認可行性。</p>
+        </div>
       </div>
     </div>
 
@@ -242,7 +291,7 @@
 
     <div id="distanceContainer">
       <label id="distanceLabel" for="distanceInput">距離（公里）：</label>
-      <input type="number" id="distanceInput" min="0" step="0.1" />
+      <input type="number" id="distanceInput" min="0" step="0.1" placeholder="例如 3.8" />
       <span id="distanceMsg"></span>
     </div>
   </div>
@@ -289,15 +338,29 @@ const coffeeFlavors = [
   "胡椒 烘焙程度75% 咖啡因55mg"
 ];
 
-// 控制變數
-let orderCounters = {
-  cake: 0,
-  drink: 0,
-  coffee: 0
-};
+// 🔧 控制狀態變數
+let orderCounters = { cake: 0, drink: 0, coffee: 0 };
 let allOrders = [];
 let selectedDatetime = "";
 let cityDistance = 0;
+
+// ✅ 市外距離邏輯定義（照你的規則）
+// 3公里內 = 300元；每超出1公里（無條件進位）+100；15公里以上每公里 +150
+function calcDeliveryThreshold(km) {
+  if (km <= 3) return 300;
+  const fullKM = Math.ceil(km);
+  let extraKM = fullKM - 3;
+  let cost = 300;
+
+  if (fullKM <= 15) {
+    cost += extraKM * 100;
+  } else {
+    const over15 = fullKM - 15;
+    cost += (12 * 100) + (over15 * 150);
+  }
+
+  return cost;
+}
 </script>
 <script>
 function generateItemId() {
@@ -499,17 +562,21 @@ function recalculateAll() {
   });
 
   const summaryText = sortedSummary.map(([k, v]) => `${k}×${v}`).join('、');
-  const dtText = selectedDatetime ? `<p><strong>預計取餐：</strong>${selectedDatetime.replace('T', ' ')}</p>` : '';
 
+  // ➕ 新增市外距離門檻邏輯與提示訊息
   let deliveryNote = '';
   if (cityDistance > 0) {
-    const required = cityDistance < 1 ? 150 : cityDistance <= 2 ? 200 : 300;
-    if ((total - discount) < required) {
-      deliveryNote = `<p style="color:red">⚠️ 市外 ${cityDistance} 公里，需滿 ${required} 元才可配送</p>`;
-    } else {
-      deliveryNote = `<p style="color:green">✅ 已符合 ${cityDistance} 公里配送門檻</p>`;
-    }
+    const required = calcDeliveryThreshold(cityDistance);
+    const current = total - discount;
+    document.getElementById('distanceMsg').textContent =
+      current >= required
+        ? `✅ 已符合外送門檻（${required} 元）`
+        : `⚠️ 未達外送門檻：需滿 ${required} 元`;
+  } else {
+    document.getElementById('distanceMsg').textContent = '';
   }
+
+  const dtText = selectedDatetime ? `<p><strong>預計取餐：</strong>${selectedDatetime.replace('T', ' ')}</p>` : '';
 
   document.getElementById('summary').innerHTML = `
     <p><strong>總金額：</strong>${total - discount} 元</p>
@@ -517,7 +584,6 @@ function recalculateAll() {
     <p style="color:green">折抵金額：${discount} 元</p>
     <p style="color:#004aad">可獲得集點卡 ${points} 點</p>
     ${dtText}
-    ${deliveryNote}
     ${hasInvalid ? `<p style="color:red;">❗ 有組合尚未填寫完成</p>` : ''}
     <p style="color:#555">${summaryText}</p>
     <div class="summary-buttons">
@@ -533,7 +599,11 @@ function recalculateAll() {
 <script>
 function copySummary() {
   const summaryMap = {};
+  let hasValid = false;
+
   document.querySelectorAll(".combo-block").forEach(div => {
+    if (div.classList.contains('invalid')) return;
+
     const qty = +div.querySelector(".qty")?.value || 1;
     let label = "";
 
@@ -558,12 +628,20 @@ function copySummary() {
       label = `${f}${shortNote}${t}${s}`;
     }
 
-    summaryMap[label] = (summaryMap[label] || 0) + qty;
+    if (label) {
+      summaryMap[label] = (summaryMap[label] || 0) + qty;
+      hasValid = true;
+    }
   });
+
+  if (!hasValid) {
+    alert("⚠️ 還沒有正確的訂單，請確認品項是否填寫完成。");
+    return;
+  }
 
   const summaryText = Object.entries(summaryMap).map(([k, v]) => `${k}×${v}`).join('、');
   const textToCopy = selectedDatetime
-    ? `${summaryText}，取餐時間${selectedDatetime.replace('T', ' ')}`
+    ? `${summaryText}，取餐時間 ${selectedDatetime.replace('T', ' ')}`
     : summaryText;
 
   navigator.clipboard.writeText(textToCopy).then(() => {
