@@ -86,12 +86,12 @@
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       padding: 1em;
-      min-width: 12em;
+      min-width: 13em;
       max-width: 80vw;
       z-index: 999;
       font-size: 0.9rem;
       line-height: 1.4;
-      white-space: pre-wrap;
+      white-space: normal;
     }
 
     .wrap-with-hint:hover .hint-box {
@@ -174,16 +174,9 @@
       cursor: pointer;
     }
 
-    .circle-button.line-logo {
-      background-color: #00c300;
-      color: white;
-      font-weight: bold;
-      font-size: 1.2rem;
-    }
-
     .circle-button img {
-      width: 1.2em;
-      height: 1.2em;
+      width: 1.5em;
+      height: 1.5em;
     }
 
     .copy-button {
@@ -217,6 +210,7 @@
     #distanceMsg {
       font-size: 0.9rem;
       color: #333;
+      white-space: nowrap;
     }
 
     @media (min-width: 768px) {
@@ -238,7 +232,7 @@
         <span class="hint-icon">?</span>
         <div class="hint-box">
           <strong>雞蛋糕組合說明</strong>
-          <p>每組為 2 顆，可混搭不同口味</p>
+          <p>每份 2 顆，可混搭不同口味：</p>
           <ul>
             <li>純口味：20 元</li>
             <li>單餡口味：30 元</li>
@@ -251,11 +245,11 @@
         <button onclick="addOrder('drink')">➕ 飲品</button>
         <span class="hint-icon">?</span>
         <div class="hint-box">
-          <strong>飲品價格</strong>
-          <p>依內用／外帶、容量區分</p>
+          <strong>飲品價格說明</strong>
+          <p>容量依內用與外帶區分：</p>
           <ul>
-            <li>冬瓜茶：內用 240ml / 10 元、外帶 480ml / 25 元</li>
-            <li>冬瓜鮮奶：內用 240ml / 25 元、外帶 480ml / 45 元</li>
+            <li>冬瓜茶：240ml / 10 元（內用）、480ml / 25 元（外帶）</li>
+            <li>冬瓜鮮奶：240ml / 25 元（內用）、480ml / 45 元（外帶）</li>
           </ul>
         </div>
       </div>
@@ -264,11 +258,11 @@
         <button onclick="addOrder('coffee')">➕ 咖啡</button>
         <span class="hint-icon">?</span>
         <div class="hint-box">
-          <strong>咖啡選擇說明</strong>
+          <strong>咖啡種類與價格</strong>
           <ul>
             <li>美式：內用 35 元／外帶 55 元</li>
             <li>拿鐵：內用 55 元／外帶 95 元</li>
-            <li>萌翻拿鐵：限內用，65 元</li>
+            <li>萌翻拿鐵（限內用）：65 元</li>
           </ul>
         </div>
       </div>
@@ -279,7 +273,7 @@
         <div class="hint-box">
           <strong>市外配送說明</strong>
           <p>單次消費滿 300 元，苗栗市門牌可外送。</p>
-          <p style="margin-bottom: 0;">市外請提前與老闆確認可行性。</p>
+          <p style="margin-bottom:0;">市外請提前與老闆確認可行性。</p>
         </div>
       </div>
     </div>
@@ -291,7 +285,7 @@
 
     <div id="distanceContainer">
       <label id="distanceLabel" for="distanceInput">距離（公里）：</label>
-      <input type="number" id="distanceInput" min="0" step="0.1" placeholder="例如 3.8" />
+      <input type="number" id="distanceInput" min="0" step="0.1" placeholder="例如 5.3" />
       <span id="distanceMsg"></span>
     </div>
   </div>
@@ -338,28 +332,23 @@ const coffeeFlavors = [
   "胡椒 烘焙程度75% 咖啡因55mg"
 ];
 
-// 🔧 控制狀態變數
+// 🔧 狀態控制
 let orderCounters = { cake: 0, drink: 0, coffee: 0 };
 let allOrders = [];
 let selectedDatetime = "";
 let cityDistance = 0;
 
-// ✅ 市外距離邏輯定義（照你的規則）
-// 3公里內 = 300元；每超出1公里（無條件進位）+100；15公里以上每公里 +150
+// ✅ 市外金額門檻邏輯函式
 function calcDeliveryThreshold(km) {
-  if (km <= 3) return 300;
   const fullKM = Math.ceil(km);
-  let extraKM = fullKM - 3;
-  let cost = 300;
+  if (fullKM <= 3) return 300;
 
   if (fullKM <= 15) {
-    cost += extraKM * 100;
-  } else {
-    const over15 = fullKM - 15;
-    cost += (12 * 100) + (over15 * 150);
+    return 300 + (fullKM - 3) * 100;
   }
 
-  return cost;
+  // 超過 15 公里後：所有第 4 公里起都用 150 元計算
+  return 300 + (fullKM - 3) * 150;
 }
 </script>
 <script>
@@ -429,6 +418,7 @@ function addOrder(type) {
   div.innerHTML = content;
   document.getElementById("orderArea").appendChild(div);
 
+  // 如果是咖啡，要加判斷「萌翻內用限定」
   if (type === "coffee") {
     const sel = div.querySelector(".coffeeType");
     const placeSel = div.querySelector(".place");
@@ -443,6 +433,7 @@ function addOrder(type) {
     });
   }
 
+  // 綁定所有輸入事件，即時重算
   div.querySelectorAll("select, input").forEach(el =>
     el.addEventListener("input", recalculateAll)
   );
@@ -452,22 +443,6 @@ function addOrder(type) {
 }
 </script>
 <script>
-function removeOrder(id, type) {
-  const el = document.querySelector(`[data-id="${id}"]`);
-  if (el) el.remove();
-  allOrders = allOrders.filter(o => o.id !== id);
-  orderCounters[type]--;
-
-  let count = 0;
-  document.querySelectorAll(`.combo-block[data-type="${type}"]`).forEach(block => {
-    count++;
-    const title = block.querySelector(".title");
-    if (title) title.textContent = `第 ${count} 組 - ${type === "cake" ? "雞蛋糕" : type === "drink" ? "飲品" : "咖啡"} 訂單`;
-  });
-
-  recalculateAll();
-}
-
 function recalculateAll() {
   let total = 0, discount = 0, points = 0;
   let cakeQty = 0, drinkQty = 0, coffeeQty = 0;
@@ -562,21 +537,17 @@ function recalculateAll() {
   });
 
   const summaryText = sortedSummary.map(([k, v]) => `${k}×${v}`).join('、');
+  const dtText = selectedDatetime ? `<p><strong>預計取餐：</strong>${selectedDatetime.replace('T', ' ')}</p>` : '';
 
-  // ➕ 新增市外距離門檻邏輯與提示訊息
-  let deliveryNote = '';
+  // 📏 新版距離門檻與訊息
   if (cityDistance > 0) {
     const required = calcDeliveryThreshold(cityDistance);
     const current = total - discount;
-    document.getElementById('distanceMsg').textContent =
-      current >= required
-        ? `✅ 已符合外送門檻（${required} 元）`
-        : `⚠️ 未達外送門檻：需滿 ${required} 元`;
+    const msg = `滿 ${required} 元方可為您外送，詳細請與老闆聯繫`;
+    document.getElementById('distanceMsg').textContent = msg;
   } else {
     document.getElementById('distanceMsg').textContent = '';
   }
-
-  const dtText = selectedDatetime ? `<p><strong>預計取餐：</strong>${selectedDatetime.replace('T', ' ')}</p>` : '';
 
   document.getElementById('summary').innerHTML = `
     <p><strong>總金額：</strong>${total - discount} 元</p>
@@ -587,7 +558,9 @@ function recalculateAll() {
     ${hasInvalid ? `<p style="color:red;">❗ 有組合尚未填寫完成</p>` : ''}
     <p style="color:#555">${summaryText}</p>
     <div class="summary-buttons">
-      <button class="circle-button line-logo" onclick="window.open('https://reurl.cc/qZAE2y', '_blank')">L</button>
+      <button class="circle-button" onclick="window.open('https://reurl.cc/qZAE2y', '_blank')">
+        <img src="https://scdn.line-apps.com/n/line_add_friends/btn/icon_80.png" alt="LINE" />
+      </button>
       <button class="circle-button" onclick="window.open('https://www.facebook.com/menghushao', '_blank')">
         <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="FB" />
       </button>
