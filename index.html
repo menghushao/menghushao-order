@@ -44,7 +44,6 @@
     }
 
     .wrap-with-hint { position: relative; }
-
     .hint-icon {
       position: absolute;
       top: -6px;
@@ -337,11 +336,13 @@ const coffeeFlavors = [
   "胡椒 烘焙程度75% 咖啡因55mg"
 ];
 
+// 👉 初始計數與選項
 let orderCounters = { cake: 0, drink: 0, coffee: 0 };
 let allOrders = [];
 let selectedDatetime = "";
 let cityDistance = 0;
 
+// 📏 配送門檻規則
 function calcDeliveryThreshold(km) {
   const fullKM = Math.ceil(km);
   if (fullKM <= 3) return 300;
@@ -371,7 +372,6 @@ function clearDistance() {
   document.getElementById("distanceContainer").style.display = "none";
   recalculateAll();
 }
-
 document.getElementById("datetimePicker").addEventListener("change", e => {
   selectedDatetime = e.target.value;
   recalculateAll();
@@ -474,16 +474,16 @@ function recalculateAll() {
   const flatItems = [];
 
   document.querySelectorAll('.combo-block').forEach(div => {
-    // ✅ 過濾份數欄位，強制整數，最多3位數
+    // ✅ 抓出開頭為 1~9，後面最多兩位數的整數（1~999）
     let raw = div.querySelector('.qty')?.value || "1";
-    let clean = raw.replace(/\D/g, '').slice(0, 3);
-    let qty = parseInt(clean || "1", 10);
-    if (qty < 1) qty = 1;
+    let match = raw.match(/[1-9][0-9]{0,2}/);
+    let qty = parseInt(match ? match[0] : "1", 10);
     div.querySelector('.qty').value = qty;
 
     div.classList.remove('invalid');
     let label = '', price = 0;
 
+    // 🍳 雞蛋糕
     if (div.querySelector('.c1')) {
       const f1 = div.querySelector('.c1').value;
       const f2 = div.querySelector('.c2').value || f1;
@@ -496,6 +496,8 @@ function recalculateAll() {
         ? (cakeTypeMap[f1].type === 'pure' ? 20 : cakeTypeMap[f1].type === 'single' ? 30 : 35)
         : cakeTypeMap[f1].price + cakeTypeMap[f2].price;
       cakeQty += qty;
+
+    // 🧋 飲品
     } else if (div.querySelector('.drinkFlavor')) {
       const f = div.querySelector('.drinkFlavor').value;
       const t = div.querySelector('.coldness')?.value;
@@ -509,6 +511,8 @@ function recalculateAll() {
         ? (s === '內' ? 10 : s === '外自' ? 15 : 25)
         : (s === '內' ? 25 : s === '外自' ? 35 : 45);
       drinkQty += qty;
+
+    // ☕ 咖啡
     } else if (div.querySelector('.coffeeType')) {
       const f = div.querySelector('.coffeeType').value;
       const t = div.querySelector('.temp')?.value;
@@ -529,11 +533,12 @@ function recalculateAll() {
     total += price * qty;
     summaryMap[label] = (summaryMap[label] || 0) + qty;
     for (let i = 0; i < qty; i++) flatItems.push({ label, price });
+
     div.querySelector('.subtotal').textContent = `小計：${price * qty} 元`;
   });
 
+  // 折扣邏輯（12 件折最低）
   flatItems.sort((a, b) => b.price - a.price);
-
   let i = 0;
   while (i + 12 <= flatItems.length) {
     const group = flatItems.slice(i, i + 12);
@@ -604,8 +609,8 @@ function copySummary() {
     if (div.classList.contains('invalid')) return;
 
     const qtyRaw = div.querySelector(".qty")?.value || "1";
-    const cleanQty = qtyRaw.replace(/\D/g, '').slice(0, 3);
-    const qty = parseInt(cleanQty || "1", 10) || 1;
+    const match = qtyRaw.match(/[1-9][0-9]{0,2}/);
+    const qty = parseInt(match ? match[0] : "1", 10);
 
     let label = "";
 
