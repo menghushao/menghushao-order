@@ -34,48 +34,64 @@
 
     .type-buttons {
       display: flex;
-      gap: 0.5em;
+      gap: 0.6em;
       flex-wrap: wrap;
       align-items: center;
     }
 
+    .type-buttons .wrap-with-hint {
+      position: relative;
+    }
+
     .type-buttons button {
-      flex: 1;
       font-size: 1rem;
-      padding: 0.6em;
+      padding: 0.6em 1em;
       background: #ff9800;
       color: white;
       border: none;
       border-radius: 6px;
       cursor: pointer;
+      position: relative;
     }
 
     .type-buttons button:hover {
       background: #e68900;
     }
 
-    .type-buttons .help-icon {
-      font-size: 1rem;
-      background: transparent;
-      border: none;
-      cursor: help;
-      padding: 0 0.5em;
-      color: #333;
-    }
-
-    #datetimeContainer {
-      margin-top: 0.5em;
+    .type-buttons .hint-icon {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      width: 1.2em;
+      height: 1.2em;
+      background: #fff;
+      color: #444;
+      font-size: 0.75rem;
+      border-radius: 50%;
+      border: 1px solid #ccc;
       display: flex;
       align-items: center;
-      gap: 0.5em;
+      justify-content: center;
+      cursor: help;
     }
 
-    #datetimeLabel {
-      font-weight: bold;
-    }
-
-    #datetimePicker {
-      font-size: 1rem;
+    .type-buttons .hint-icon:hover::after {
+      content: attr(data-tip);
+      position: absolute;
+      top: 140%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff;
+      color: #222;
+      border: 1px solid #aaa;
+      border-radius: 6px;
+      padding: 0.6em;
+      white-space: pre-line;
+      font-size: 0.9rem;
+      width: max-content;
+      max-width: 90vw;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      z-index: 999;
     }
 
     .combo-block {
@@ -123,9 +139,9 @@
 
     .summary-buttons {
       display: flex;
+      flex-wrap: wrap;
       gap: 0.5em;
       margin-top: 1em;
-      flex-wrap: wrap;
     }
 
     .circle-button {
@@ -138,6 +154,13 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
+    }
+
+    .circle-button.line-logo {
+      background-color: #00c300;
+      color: white;
+      font-weight: bold;
+      font-size: 1.2rem;
     }
 
     .circle-button img {
@@ -154,6 +177,30 @@
       font-size: 1rem;
     }
 
+    #datetimeContainer,
+    #distanceContainer {
+      margin-top: 0.5em;
+      display: none;
+      align-items: center;
+      gap: 0.5em;
+      flex-wrap: wrap;
+    }
+
+    #datetimeLabel,
+    #distanceLabel {
+      font-weight: bold;
+    }
+
+    #datetimePicker,
+    #distanceInput {
+      font-size: 1rem;
+    }
+
+    #distanceMsg {
+      font-size: 0.9rem;
+      color: #333;
+    }
+
     @media (min-width: 768px) {
       html { font-size: 16px; }
     }
@@ -164,21 +211,39 @@
     <div id="summary">🔢 尚未選擇任何品項</div>
 
     <div class="type-buttons">
-      <button onclick="addOrder('cake')">➕ 雞蛋糕</button>
-      <button class="help-icon" title="一份2顆，可混搭不同口味。\n純雞蛋糕：2顆20元，組合價10元\n單餡雞蛋糕：2顆30元，組合價15元\n雙餡雞蛋糕：2顆35元，組合價20元">❓</button>
+      <div class="wrap-with-hint">
+        <button onclick="showDatetimePicker()">⏰ 預計取餐時間</button>
+      </div>
 
-      <button onclick="addOrder('drink')">➕ 飲品</button>
-      <button class="help-icon" title="冬瓜茶：內用240mL 10元，外帶480mL 25元\n冬瓜鮮奶：內用240mL 25元，外帶480mL 45元">❓</button>
+      <div class="wrap-with-hint">
+        <button onclick="addOrder('cake')">➕ 雞蛋糕</button>
+        <span class="hint-icon" data-tip="一份 2 顆，可混搭不同口味。\n純雞蛋糕：20 元，單餡：30 元，雙餡：35 元">?</span>
+      </div>
 
-      <button onclick="addOrder('coffee')">➕ 咖啡</button>
-      <button class="help-icon" title="美式：內用35元，外帶55元\n拿鐵：內用55元，外帶95元\n萌翻拿鐵（限內用）65元">❓</button>
+      <div class="wrap-with-hint">
+        <button onclick="addOrder('drink')">➕ 飲品</button>
+        <span class="hint-icon" data-tip="冬瓜茶：內用 240ml / 10 元，外帶 480ml / 25 元\n冬瓜鮮奶：內用 240ml / 25 元，外帶 480ml / 45 元">?</span>
+      </div>
 
-      <button onclick="showDatetimePicker()">⏰ 預計取餐時間</button>
+      <div class="wrap-with-hint">
+        <button onclick="addOrder('coffee')">➕ 咖啡</button>
+        <span class="hint-icon" data-tip="美式：內用 35 元，外帶 55 元\n拿鐵：內用 55 元，外帶 95 元\n萌翻拿鐵（限內用）：65 元">?</span>
+      </div>
+
+      <div class="wrap-with-hint">
+        <button onclick="showDistanceInput()">📏 市外距離</button>
+      </div>
     </div>
 
-    <div id="datetimeContainer" style="display:none;">
+    <div id="datetimeContainer">
       <label id="datetimeLabel" for="datetimePicker">取餐時間：</label>
       <input type="datetime-local" id="datetimePicker" />
+    </div>
+
+    <div id="distanceContainer">
+      <label id="distanceLabel" for="distanceInput">距離（公里）：</label>
+      <input type="number" id="distanceInput" min="0" step="0.1" />
+      <span id="distanceMsg"></span>
     </div>
   </div>
 
@@ -224,21 +289,36 @@ const coffeeFlavors = [
   "胡椒 烘焙程度75% 咖啡因55mg"
 ];
 
-let orderCounters = { cake: 0, drink: 0, coffee: 0 };
+// 控制變數
+let orderCounters = {
+  cake: 0,
+  drink: 0,
+  coffee: 0
+};
 let allOrders = [];
 let selectedDatetime = "";
-
+let cityDistance = 0;
+</script>
+<script>
 function generateItemId() {
   return Math.random().toString(36).substr(2, 9);
 }
 
 function showDatetimePicker() {
-  const box = document.getElementById("datetimeContainer");
-  box.style.display = "flex";
+  document.getElementById("datetimeContainer").style.display = "flex";
+}
+
+function showDistanceInput() {
+  document.getElementById("distanceContainer").style.display = "flex";
 }
 
 document.getElementById("datetimePicker").addEventListener("change", e => {
   selectedDatetime = e.target.value;
+  recalculateAll();
+});
+
+document.getElementById("distanceInput").addEventListener("input", e => {
+  cityDistance = +e.target.value || 0;
   recalculateAll();
 });
 
@@ -344,8 +424,7 @@ function recalculateAll() {
         div.classList.add('invalid'); hasInvalid = true;
         div.querySelector('.subtotal').textContent = '小計：-- 元'; return;
       }
-      const sortedLabel = [f1, f2].sort().join('+');
-      label = sortedLabel;
+      label = [f1, f2].sort().join('+');
       price = f1 === f2
         ? (cakeTypeMap[f1].type === 'pure' ? 20
             : cakeTypeMap[f1].type === 'single' ? 30 : 35)
@@ -420,8 +499,17 @@ function recalculateAll() {
   });
 
   const summaryText = sortedSummary.map(([k, v]) => `${k}×${v}`).join('、');
-
   const dtText = selectedDatetime ? `<p><strong>預計取餐：</strong>${selectedDatetime.replace('T', ' ')}</p>` : '';
+
+  let deliveryNote = '';
+  if (cityDistance > 0) {
+    const required = cityDistance < 1 ? 150 : cityDistance <= 2 ? 200 : 300;
+    if ((total - discount) < required) {
+      deliveryNote = `<p style="color:red">⚠️ 市外 ${cityDistance} 公里，需滿 ${required} 元才可配送</p>`;
+    } else {
+      deliveryNote = `<p style="color:green">✅ 已符合 ${cityDistance} 公里配送門檻</p>`;
+    }
+  }
 
   document.getElementById('summary').innerHTML = `
     <p><strong>總金額：</strong>${total - discount} 元</p>
@@ -429,16 +517,15 @@ function recalculateAll() {
     <p style="color:green">折抵金額：${discount} 元</p>
     <p style="color:#004aad">可獲得集點卡 ${points} 點</p>
     ${dtText}
+    ${deliveryNote}
     ${hasInvalid ? `<p style="color:red;">❗ 有組合尚未填寫完成</p>` : ''}
     <p style="color:#555">${summaryText}</p>
     <div class="summary-buttons">
-      <button class="circle-button" onclick="window.open('https://reurl.cc/qZAE2y', '_blank')">
-        <img src="https://scdn.line-apps.com/n/line_add_friends/btn/zh-Hant.png" alt="LINE" />
-      </button>
+      <button class="circle-button line-logo" onclick="window.open('https://reurl.cc/qZAE2y', '_blank')">L</button>
       <button class="circle-button" onclick="window.open('https://www.facebook.com/menghushao', '_blank')">
         <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="FB" />
       </button>
-      <button class="copy-button" onclick="copySummary()">複製摘要</button>
+      <button class="copy-button" onclick="copySummary()">點我複製訂單，以 LINE 或 FB 與老闆點餐</button>
     </div>
   `;
 }
@@ -480,7 +567,7 @@ function copySummary() {
     : summaryText;
 
   navigator.clipboard.writeText(textToCopy).then(() => {
-    alert("已複製訂單摘要！");
+    alert("✅ 已複製訂單摘要！");
   }).catch(() => {
     alert("⚠️ 複製失敗，請手動選取");
   });
