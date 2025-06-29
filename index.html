@@ -665,14 +665,18 @@ function copySummary() {
 
 let textToCopy = `老闆，我要${summaryText}`;
 
-if (selectedDatetime) {
-  textToCopy += `，取餐時間 ${selectedDatetime.replace('T', ' ')}`;
-}
-
-const extra = document.getElementById("extraInfo")?.value.trim();
 if (extra && extra.replace(/\s/g, '') !== '') {
   textToCopy += `，請幫我外送（${extra}）`;
+
+  if (selectedDatetime) {
+    textToCopy += `，送達時間 ${selectedDatetime.replace('T', ' ')}`;
+  }
+} else {
+  if (selectedDatetime) {
+    textToCopy += `，取餐時間 ${selectedDatetime.replace('T', ' ')}`;
+  }
 }
+
 textToCopy += '，謝謝';
   navigator.clipboard.writeText(textToCopy).then(() => {
     document.getElementById('copiedModal').style.display = 'block';
