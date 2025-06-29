@@ -255,7 +255,7 @@
       </div>
 
       <div class="wrap-with-hint">
-        <button onclick="showDistanceInput()">📏 市外距離</button>
+        <button onclick="showDistanceInput()">需要外送</button>
         <span class="hint-icon">?</span>
         <div class="hint-box">
           <strong>市外配送說明</strong>
@@ -273,10 +273,10 @@
 
     <div id="distanceContainer">
       <label id="distanceLabel" for="distanceInput">
-        填入您與苗栗市中山路203號萌虎燒的距離(公里)，建議透過<a href="https://maps.app.goo.gl/LYS2HDQx46RACmFo8" target="_blank">GOOGLE地圖</a>避開收費路段
+        <input type="text" id="extraInfo" placeholder="請填入地址 / 店號 / 電話 / 稱謂" />
+        市外建議透過<a href="https://maps.app.goo.gl/LYS2HDQx46RACmFo8" target="_blank">GOOGLE地圖</a>避開收費路段，填入您與萌虎燒的距離(公里)，以估算需滿額多少方可為您外送。
       </label>
       <input type="number" id="distanceInput" min="0" step="0.1" placeholder="例如 5.3" />
-      <input type="text" id="extraInfo" placeholder="請填入地址 / 店號 / 電話 / 稱謂" />
       <span id="distanceMsg"></span>
       <button onclick="clearDistance()">❌</button>
     </div>
