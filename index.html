@@ -665,20 +665,25 @@ function copySummary() {
 
 let textToCopy = `老闆，我要${summaryText}`;
 
-if (selectedDatetime) {
-  textToCopy += `，取餐時間 ${selectedDatetime.replace('T', ' ')}`;
-}
-
-const extra = document.getElementById("extraInfo")?.value.trim();
 if (extra && extra.replace(/\s/g, '') !== '') {
   textToCopy += `，請幫我外送（${extra}）`;
+
+  if (selectedDatetime) {
+    textToCopy += `，送達時間 ${selectedDatetime.replace('T', ' ')}`;
+  }
+} else {
+  if (selectedDatetime) {
+    textToCopy += `，取餐時間 ${selectedDatetime.replace('T', ' ')}`;
+  }
 }
+
 textToCopy += '，謝謝';
-  navigator.clipboard.writeText(textToCopy).then(() => {
-    document.getElementById('copiedModal').style.display = 'block';
-  }).catch(() => {
-    alert("⚠️ 複製失敗，請手動選取");
-  });
+
+navigator.clipboard.writeText(textToCopy).then(() => {
+  document.getElementById('copiedModal').style.display = 'block';
+}).catch(() => {
+  alert("⚠️ 複製失敗，請手動選取");
+});
 }
 </script>
 <div id="copiedModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:1000;">
