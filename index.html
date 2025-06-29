@@ -14,6 +14,108 @@
       color: #222;
     }
 
+    #fixedHeader {
+      position: sticky;
+      top: 0;
+      background: #fffbe7;
+      padding: 1em;
+      z-index: 100;
+      border-bottom: 2px solid #ffa726;
+    }
+
+    #summary {
+      font-size: 0.95rem;
+      line-height: 1.3;
+      background-color: #fffefa;
+      border: 1px dashed #aaa;
+      border-radius: 6px;
+      padding: 1em;
+      margin-bottom: 1em;
+    }
+
+    .summary-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5em;
+      margin-top: 1em;
+      align-items: center;
+    }
+
+    .circle-button {
+      width: 2.4em;
+      height: 2.4em;
+      border-radius: 50%;
+      border: none;
+      background-color: #ececec;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .circle-button img {
+      width: 1.5em;
+      height: 1.5em;
+    }
+
+    .copy-button {
+      border-radius: 6px;
+      padding: 0.4em 0.8em;
+      background-color: #ff9800;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .copy-button:hover {
+      background-color: #e68900;
+    }
+
+    @media (min-width: 768px) {
+      html { font-size: 16px; }
+    }
+
+    .hint-icon {
+      display: inline-block;
+      background: #888;
+      color: #fff;
+      border-radius: 50%;
+      font-size: 0.6em;
+      width: 1em;
+      height: 1em;
+      line-height: 1em;
+      text-align: center;
+      margin-left: 0.4em;
+      cursor: pointer;
+    }
+
+    .hint-box {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: #fff;
+      color: #222;
+      padding: 0.6em;
+      border: 1px solid #888;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      width: 250px;
+      box-shadow: 2px 2px 4px rgba(0,0,0,0.15);
+      z-index: 999;
+    }
+
+    .wrap-with-hint {
+      position: relative;
+      margin-right: 0.6em;
+    }
+
+    .wrap-with-hint:hover .hint-box {
+      display: block;
+    }
+
+    /* 🆕 複製後彈窗樣式 */
     #copiedModal {
       display: none;
       position: fixed;
@@ -24,6 +126,7 @@
       height: 100%;
       background: rgba(0,0,0,0.4);
     }
+
     #copiedModal > div {
       background: #fff;
       padding: 1.2em;
@@ -34,6 +137,7 @@
       text-align: center;
       box-shadow: 0 6px 16px rgba(0,0,0,0.3);
     }
+
     #copiedModal button {
       margin-top: 0.6em;
       padding: 0.6em;
@@ -43,13 +147,14 @@
       cursor: pointer;
       width: 100%;
     }
+
     #copiedModal .line { background: #00c300; color: white; }
     #copiedModal .fb { background: #1877f2; color: white; }
     #copiedModal .close { background: #ccc; color: #333; }
-      </style>
+  </style>
 </head>
 <body>
-  <!-- ✅ 成功複製後的三鍵彈窗 -->
+  <!-- ✅ 複製成功後的三鍵彈窗 -->
   <div id="copiedModal">
     <div>
       <p style="font-size:1.1rem; font-weight:bold;">✅ 已複製訂單摘要！</p>
@@ -66,7 +171,6 @@
       <div class="wrap-with-hint">
         <button onclick="showDatetimePicker()">⏰ 預計取餐時間</button>
       </div>
-
       <div class="wrap-with-hint">
         <button onclick="addOrder('cake')">➕ 雞蛋糕</button>
         <span class="hint-icon">?</span>
@@ -80,7 +184,6 @@
           </ul>
         </div>
       </div>
-
       <div class="wrap-with-hint">
         <button onclick="addOrder('drink')">➕ 飲品</button>
         <span class="hint-icon">?</span>
@@ -88,34 +191,31 @@
           <strong>飲品價格說明</strong>
           <p>容量依內用與外帶區分：</p>
           <ul>
-            <li>冬瓜茶240ml/10元（內用）、480ml/25元（外帶）</li>
-            <li>冬瓜鮮奶240ml/25元（內用）、480ml/45元（外帶）</li>
+            <li>冬瓜茶：內用240ml/10元，外帶480ml/25元</li>
+            <li>冬瓜鮮奶：內用240ml/25元，外帶480ml/45元</li>
             <li>自備悲劇折10元</li>
           </ul>
         </div>
       </div>
-
       <div class="wrap-with-hint">
         <button onclick="addOrder('coffee')">➕ 咖啡</button>
         <span class="hint-icon">?</span>
         <div class="hint-box">
-          <strong>咖啡種類與價格</strong>
+          <strong>咖啡價格說明</strong>
           <ul>
-            <li>美式內用35元／外帶55元</li>
-            <li>拿鐵內用55元／外帶95元</li>
-            <li>萌翻拿鐵（限內用）：65元</li>
+            <li>美式內用35／外帶55</li>
+            <li>拿鐵內用55／外帶95</li>
+            <li>萌翻拿鐵：65（限內用）</li>
             <li>自備悲劇折10元</li>
           </ul>
         </div>
       </div>
-
       <div class="wrap-with-hint">
         <button onclick="showDistanceInput()">需要外送</button>
         <span class="hint-icon">?</span>
         <div class="hint-box">
           <strong>市外配送說明</strong>
-          <p>單次消費滿 300 元，苗栗市門牌可外送。</p>
-          <p style="margin-bottom: 0;">市外請提前與老闆確認可行性。</p>
+          <p>苗栗市內滿300元可外送。市外請先與老闆聯繫。</p>
         </div>
       </div>
     </div>
@@ -129,8 +229,9 @@
     <div id="distanceContainer" style="display:none; margin-top:0.5em;">
       <label for="distanceInput">
         <input type="text" id="extraInfo" placeholder="地址/店號/電話/稱謂" /><br />
-        市外建議透過 <a href="https://maps.app.goo.gl/LYS2HDQx46RACmFo8" target="_blank">GOOGLE 地圖</a>
-        填入您與萌虎燒的距離(公里)，以估算外送門檻。
+        市外建議透過
+        <a href="https://maps.app.goo.gl/LYS2HDQx46RACmFo8" target="_blank">GOOGLE地圖</a>
+        避開收費路段，填入您與萌虎燒的距離(公里)，以估算需滿額多少方可為您外送。
       </label>
       <input type="number" id="distanceInput" min="0" step="0.1" placeholder="例如 5.3" />
       <span id="distanceMsg"></span>
