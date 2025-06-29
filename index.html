@@ -675,12 +675,21 @@ if (extra && extra.replace(/\s/g, '') !== '') {
 }
 
   navigator.clipboard.writeText(textToCopy).then(() => {
-    alert("✅ 已複製訂單摘要！");
+    document.getElementById('copiedModal').style.display = 'block';
   }).catch(() => {
     alert("⚠️ 複製失敗，請手動選取");
   });
 }
 </script>
-
+<div id="copiedModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:1000;">
+  <div style="background:#fff; padding:1.2em; margin:20% auto; width:90%; max-width:400px; border-radius:8px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.2);">
+    <p style="font-size:1.1rem; font-weight:bold;">✅ 已複製訂單摘要！</p>
+    <div style="display:flex; flex-direction:column; gap:0.6em; margin-top:1em;">
+      <button onclick="window.open('https://reurl.cc/qZAE2y','_blank')" style="padding:0.6em; background:#00c300; color:white; border:none; border-radius:6px;">以 LINE 訂餐</button>
+      <button onclick="window.open('https://m.me/menghushao','_blank')" style="padding:0.6em; background:#1877f2; color:white; border:none; border-radius:6px;">以 Facebook 訂餐</button>
+      <button onclick="document.getElementById('copiedModal').style.display='none'" style="padding:0.6em; background:#ccc; color:#333; border:none; border-radius:6px;">我再調整一下訂單</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
