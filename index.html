@@ -99,7 +99,8 @@
     }
 
     .type-buttons button:hover { background: #e68900; }
-        #datetimeContainer,
+
+    #datetimeContainer,
     #distanceContainer {
       margin-top: 0.5em;
       display: none;
@@ -156,8 +157,7 @@
       margin-top: 0.5em;
       cursor: pointer;
     }
-
-    .summary-buttons {
+        .summary-buttons {
       display: flex;
       flex-wrap: wrap;
       gap: 0.5em;
@@ -199,9 +199,51 @@
     @media (min-width: 768px) {
       html { font-size: 16px; }
     }
+
+    #copiedModal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.4);
+    }
+    #copiedModal > div {
+      background: #fff;
+      border-radius: 8px;
+      padding: 1.2em;
+      width: 90%;
+      max-width: 400px;
+      margin: 10% auto;
+      text-align: center;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    }
+    #copiedModal button {
+      padding: 0.6em;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    #copiedModal .line { background: #00c300; color: #fff; }
+    #copiedModal .fb { background: #1877f2; color: #fff; }
+    #copiedModal .close { background: #ccc; color: #333; }
   </style>
 </head>
 <body>
+
+  <!-- ✅ 複製成功彈窗 modal -->
+  <div id="copiedModal">
+    <div>
+      <p style="font-size:1.1rem; font-weight:bold;">✅ 已複製訂單摘要！</p>
+      <div style="display:flex; flex-direction:column; gap:0.5em; margin-top:1em;">
+        <button class="line" onclick="window.open('https://reurl.cc/qZAE2y','_blank')">以 LINE 訂餐</button>
+        <button class="fb" onclick="window.open('https://m.me/menghushao','_blank')">以 Facebook 訂餐</button>
+        <button class="close" onclick=\"document.getElementById('copiedModal').style.display='none'\">我還要調整訂單</button>
+      </div>
+    </div>
+  </div>
     <div id="fixedHeader">
     <div id="summary">🔢 尚未選擇任何品項</div>
 
@@ -229,8 +271,8 @@
           <strong>飲品價格說明</strong>
           <p>容量依內用與外帶區分：</p>
           <ul>
-            <li>冬瓜茶240ml/10元（內用）、480ml/25元（外帶）</li>
-            <li>冬瓜鮮奶240ml/25元（內用）、480ml/45元（外帶）</li>
+            <li>冬瓜茶：內用240ml/10元，外帶480ml/25元</li>
+            <li>冬瓜鮮奶：內用240ml/25元，外帶480ml/45元</li>
             <li>自備悲劇折10元</li>
           </ul>
         </div>
@@ -239,11 +281,11 @@
         <button onclick="addOrder('coffee')">➕ 咖啡</button>
         <span class="hint-icon">?</span>
         <div class="hint-box">
-          <strong>咖啡種類與價格</strong>
+          <strong>咖啡價格說明</strong>
           <ul>
-            <li>美式內用35元／外帶55元</li>
-            <li>拿鐵內用55元／外帶95元</li>
-            <li>萌翻拿鐵（限內用）：65元</li>
+            <li>美式內用35／外帶55</li>
+            <li>拿鐵內用55／外帶95</li>
+            <li>萌翻拿鐵：65（限內用）</li>
             <li>自備悲劇折10元</li>
           </ul>
         </div>
@@ -253,8 +295,7 @@
         <span class="hint-icon">?</span>
         <div class="hint-box">
           <strong>市外配送說明</strong>
-          <p>單次消費滿 300 元，苗栗市門牌可外送。</p>
-          <p style="margin-bottom: 0;">市外請提前與老闆確認可行性。</p>
+          <p>苗栗市內滿300元可外送。市外請先與老闆聯繫。</p>
         </div>
       </div>
     </div>
@@ -277,40 +318,15 @@
       <button onclick="clearDistance()">❌</button>
     </div>
   </div>
-  <div id="orderArea"></div>
+    <div id="orderArea"></div>
 
-  <select id="platformSelect" class="circle-button" style="font-size:1.2em;" title="選擇平台">
-    <option value="line" selected>🟢 LINE</option>
-    <option value="fb">🔵 FB</option>
-  </select>
-
-  <button class="copy-button" onclick="copySummary()">✅ 複製訂單並準備傳送</button>
+  <div class="summary-buttons">
+    <button class="copy-button" onclick="copySummary()">✅ 複製訂單摘要</button>
+  </div>
 
   <script>
-    let orderCounters = { cake: 0, drink: 0, coffee: 0 };
-    let allOrders = [];
     let selectedDatetime = "";
     let cityDistance = 0;
-
-    function showDatetimePicker() {
-      document.getElementById("datetimeContainer").style.display = "flex";
-    }
-
-    function showDistanceInput() {
-      document.getElementById("distanceContainer").style.display = "flex";
-    }
-
-    function clearDatetime() {
-      document.getElementById("datetimePicker").value = "";
-      selectedDatetime = "";
-      document.getElementById("datetimeContainer").style.display = "none";
-    }
-
-    function clearDistance() {
-      document.getElementById("distanceInput").value = "";
-      cityDistance = 0;
-      document.getElementById("distanceContainer").style.display = "none";
-    }
 
     document.getElementById("datetimePicker").addEventListener("change", e => {
       selectedDatetime = e.target.value;
@@ -320,64 +336,99 @@
       cityDistance = +e.target.value || 0;
     });
 
+    function showDatetimePicker() {
+      document.getElementById("datetimeContainer").style.display = "flex";
+    }
+    function clearDatetime() {
+      document.getElementById("datetimePicker").value = "";
+      selectedDatetime = "";
+      document.getElementById("datetimeContainer").style.display = "none";
+    }
+    function showDistanceInput() {
+      document.getElementById("distanceContainer").style.display = "flex";
+    }
+    function clearDistance() {
+      document.getElementById("distanceInput").value = "";
+      cityDistance = 0;
+      document.getElementById("distanceContainer").style.display = "none";
+    }
+
     function copySummary() {
-      const blocks = document.querySelectorAll(".combo-block");
       const summaryMap = {};
       let hasValid = false;
       let hasInvalid = false;
 
-      blocks.forEach(div => {
-        const qty = parseInt(div.querySelector(".qty")?.value || "0");
-        if (!qty || qty <= 0) {
+      document.querySelectorAll(".combo-block").forEach(div => {
+        if (div.classList.contains("invalid")) {
           hasInvalid = true;
           return;
         }
 
-        let label = div.querySelector(".title")?.innerText || "餐點";
-        summaryMap[label] = (summaryMap[label] || 0) + qty;
-        hasValid = true;
+        const qtyRaw = div.querySelector(".qty")?.value.trim() || "";
+        if (!/^[1-9][0-9]{0,2}$/.test(qtyRaw)) {
+          hasInvalid = true;
+          return;
+        }
+        const qty = parseInt(qtyRaw, 10);
+
+        let label = "";
+        if (div.querySelector('.c1')) {
+          const f1 = div.querySelector('.c1')?.value;
+          const f2 = div.querySelector('.c2')?.value || f1;
+          if (!f1) { hasInvalid = true; return; }
+          label = [f1, f2].sort().join('+');
+        } else if (div.querySelector('.drinkFlavor')) {
+          const f = div.querySelector('.drinkFlavor')?.value;
+          const t = div.querySelector('.coldness')?.value;
+          const s = div.querySelector('.place')?.value;
+          if (!f || !t || !s) { hasInvalid = true; return; }
+          label = `${f}${t}${s}`;
+        } else if (div.querySelector('.coffeeType')) {
+          const f = div.querySelector('.coffeeType')?.value;
+          const t = div.querySelector('.temp')?.value;
+          const s = div.querySelector('.place')?.value;
+          const fullNote = div.querySelector('.flavorNote')?.value || '';
+          const shortNote = fullNote.split(' ')[0];
+          if (!f || !t || !s) { hasInvalid = true; return; }
+          label = `${f}${shortNote}${t}${s}`;
+        }
+
+        if (label) {
+          summaryMap[label] = (summaryMap[label] || 0) + qty;
+          hasValid = true;
+        }
       });
 
       if (!hasValid) {
-        alert("⚠️ 還沒有正確的訂單");
+        alert("⚠️ 還沒有正確的訂單，請確認品項是否填寫完成。");
         return;
       }
-
       if (hasInvalid) {
         alert("❗ 尚有訂單組合未完成");
         return;
       }
 
       const summaryText = Object.entries(summaryMap)
-        .map(([label, qty]) => `${label}×${qty}`)
-        .join("、");
+        .map(([k, v]) => `${k}×${v}`)
+        .join('、');
 
       let textToCopy = `老闆，我要${summaryText}`;
 
       if (selectedDatetime) {
-        textToCopy += `，取餐時間 ${selectedDatetime.replace("T", " ")}`;
+        textToCopy += `，取餐時間 ${selectedDatetime.replace('T', ' ')}`;
       }
 
       const extra = document.getElementById("extraInfo")?.value.trim();
-      if (extra && extra.replace(/\s/g, "") !== "") {
+      if (extra && extra.replace(/\s/g, '') !== '') {
         textToCopy += `，請幫我外送（${extra}）`;
       }
 
       navigator.clipboard.writeText(textToCopy).then(() => {
-        const selectedPlatform = document.getElementById("platformSelect")?.value;
-        const jumpURL = selectedPlatform === "fb"
-          ? "https://m.me/menghushao"
-          : "https://reurl.cc/qZAE2y";
-
-        setTimeout(() => {
-          if (confirm("✅ 已複製成功！\n\n是否要直接打開萌虎燒的 " + (selectedPlatform === "fb" ? "Facebook Messenger" : "LINE") + "？")) {
-            window.open(jumpURL, "_blank");
-          }
-        }, 100);
+        document.getElementById('copiedModal').style.display = 'block';
       }).catch(() => {
         alert("⚠️ 複製失敗，請手動選取");
       });
     }
   </script>
 </body>
-</html>  
+</html>
