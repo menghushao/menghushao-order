@@ -665,16 +665,12 @@ function copySummary() {
 
 let textToCopy = `老闆，我要${summaryText}`;
 
+if (selectedDatetime) {
+  textToCopy += `，取餐時間 ${selectedDatetime.replace('T', ' ')}`;
+}
+
 if (extra && extra.replace(/\s/g, '') !== '') {
   textToCopy += `，請幫我外送（${extra}）`;
-
-  if (selectedDatetime) {
-    textToCopy += `，送達時間 ${selectedDatetime.replace('T', ' ')}`;
-  }
-} else {
-  if (selectedDatetime) {
-    textToCopy += `，取餐時間 ${selectedDatetime.replace('T', ' ')}`;
-  }
 }
 
 textToCopy += '，謝謝';
