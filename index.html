@@ -660,12 +660,19 @@ function copySummary() {
   }
 
   const summaryText = Object.entries(summaryMap)
-    .map(([k, v]) => `${k}×${v}`)
-    .join('、');
+  .map(([k, v]) => `${k}×${v}`)
+  .join('、');
 
-  const textToCopy = selectedDatetime
-    ? `${summaryText}，取餐時間 ${selectedDatetime.replace('T', ' ')}`
-    : summaryText;
+let textToCopy = `老闆，我要${summaryText}`;
+
+if (selectedDatetime) {
+  textToCopy += `，取餐時間 ${selectedDatetime.replace('T', ' ')}`;
+}
+
+const extra = document.getElementById("extraInfo")?.value.trim();
+if (extra && extra.replace(/\s/g, '') !== '') {
+  textToCopy += `，請幫我外送（${extra}）`;
+}
 
   navigator.clipboard.writeText(textToCopy).then(() => {
     alert("✅ 已複製訂單摘要！");
