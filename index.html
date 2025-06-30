@@ -272,14 +272,24 @@
     </div>
 
     <div id="distanceContainer">
-      <label id="distanceLabel" for="distanceInput">
-        <input type="text" id="extraInfo" placeholder="地址/店號/電話/稱謂" /><br />
-        市外建議透過<a href="https://maps.app.goo.gl/LYS2HDQx46RACmFo8" target="_blank">GOOGLE地圖</a>避開收費路段，填入您與萌虎燒的距離(公里)，以估算需滿額多少方可為您外送。
-      </label>
-      <input type="number" id="distanceInput" min="0" step="0.1" placeholder="例如 5.3" />
-      <span id="distanceMsg"></span>
-      <button onclick="clearDistance()">❌</button>
-    </div>
+  <label id="distanceLabel" for="distanceInput">
+    <input type="text" id="extraInfo" placeholder="地址/店號/電話/稱謂" /><br />
+    市外建議透過
+  <a href="https://maps.app.goo.gl/..." target="_blank">GOOGLE地圖</a>
+  避開收費路段，取得與萌虎燒的距離 (公里)，再填入下方欄位估算保送門檻。<span style="white-space: nowrap;">
+      <input
+        type="number"
+        id="distanceInput"
+        min="0"
+        step="0.1"
+        placeholder="例如 5.3"
+        style="width: 5em; margin-left: 0.4em; display: inline-block; vertical-align: middle;"
+      />
+    </span>
+  </label>
+  <span id="distanceMsg"></span>
+  <button onclick="clearDistance()">❌</button>
+</div>
   </div>
 
   <div id="orderArea"></div>
@@ -578,7 +588,7 @@ function recalculateAll() {
   if (cityDistance > 0) {
     const required = calcDeliveryThreshold(cityDistance);
     document.getElementById('distanceMsg').textContent =
-      `滿 ${required} 元方可為您外送，詳細請與老闆聯繫`;
+      `需滿 ${required} 元，請先聯繫店家確認`;
   } else {
     document.getElementById('distanceMsg').textContent = '';
   }
