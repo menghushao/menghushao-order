@@ -584,10 +584,10 @@ function recalculateAll() {
   }
 
   document.getElementById('summary').innerHTML = `
-    <p><strong>總金額：</strong>${total - discount} 元</p>
-    <p>${typeSummary}，總計 ${totalQty} 份</p>
-    <p style="color:green">折抵金額：${discount} 元</p>
-    <p style="color:#004aad">可獲得集點卡 ${points} 點</p>
+    <strong>總金額：</strong>${total - discount} 元
+    <br>${typeSummary}，總計 ${totalQty} 份
+    <br>折抵金額：${discount} 元
+    <br>可獲得集點卡 ${points} 點
     ${dtText}
     ${hasInvalid ? `<p style="color:red;">❗ 尚有訂單組合未完成</p>` : ''}
     <p style="color:#555">${summaryText}</p>
