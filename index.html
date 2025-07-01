@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <title>讀取 K7 資料</title>
+  <title>讀取 K6 資料</title>
   <style>
     body { font-family: sans-serif; padding: 2em; }
     iframe { width: 100%; height: 600px; border: 1px solid #ccc; margin-top: 1em; }
@@ -10,23 +10,23 @@
 </head>
 <body>
 
-<h2>🔎 抓取 K7 的值</h2>
-<button onclick="getK7()">讀取 K7</button>
+<h2>🔎 抓取 K6 的值</h2>
+<button onclick="getK6()">讀取 K6</button>
 <p id="result">點上面的按鈕開始</p>
 
 <iframe id="iframe" src="https://menghushao.github.io/Order-management/" style="display:none;"></iframe>
 
 <script>
-function getK7() {
+function getK6() {
   const frame = document.getElementById("iframe");
   const result = document.getElementById("result");
 
   frame.onload = () => {
     try {
       const grid = frame.contentDocument.querySelector("#grid tbody");
-      const cell = grid.rows[6].cells[10]; // K7 = 第7列第11欄（從0起算）
+      const cell = grid.rows[6].cells[10]; // K6 = 第7列第11欄（從0起算）
       const value = cell?.textContent.trim() || "(空)";
-      result.textContent = "K7 的值為：「" + value + "」";
+      result.textContent = "K6 的值為：「" + value + "」";
     } catch (e) {
       result.textContent = "❌ 無法讀取：請確認同源政策允許跨頁存取";
     }
